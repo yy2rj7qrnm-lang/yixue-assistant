@@ -3,128 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>意学助手 - 智能教育平台</title>
+    <title>意学助手 - AI智能教育平台</title>
+    <meta name="description" content="意学助手 - 基于人工智能的K12教育平台，提供智能错题识别、个性化学习诊断、智能推题系统等功能">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        .gradient-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        .container {
-            background: white;
-            border-radius: 24px;
-            padding: 48px;
-            max-width: 600px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
         }
-        h1 {
-            font-size: 36px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 16px;
-        }
-        .subtitle {
-            font-size: 18px;
-            color: #6b7280;
-            margin-bottom: 32px;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        .feature {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: left;
-        }
-        .feature-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .feature-desc {
-            font-size: 13px;
-            color: #6b7280;
-        }
-        .buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        .btn {
-            padding: 12px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            display: inline-block;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(102, 126, 234, 0.5);
-        }
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-        .btn-secondary:hover {
-            background: #e5e7eb;
+        .phone-mockup {
+            width: 280px;
+            height: 560px;
+            border-radius: 32px;
+            border: 8px solid #1a1a1a;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>意学助手</h1>
-        <p class="subtitle">AI赋能个性化学习，让每个孩子都有专属学习伙伴</p>
-
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">📷</div>
-                <div class="feature-title">智能错题识别</div>
-                <div class="feature-desc">OCR拍照自动识别</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <div class="feature-title">学习诊断报告</div>
-                <div class="feature-desc">多维度能力分析</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🎯</div>
-                <div class="feature-title">智能推荐题目</div>
-                <div class="feature-desc">个性化学习路径</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🤖</div>
-                <div class="feature-title">AI智能伴学</div>
-                <div class="feature-desc">24小时在线答疑</div>
+<body class="bg-gray-50">
+    <!-- 导航栏 -->
+    <nav class="gradient-primary text-white">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <span class="text-2xl">🎓</span>
+                    </div>
+                    <span class="text-xl font-bold">意学助手</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="#features" class="hover:text-white/80 transition">功能</a>
+                    <a href="#tech" class="hover:text-white/80 transition">技术</a>
+                    <a href="https://github.com/yy2rj7qrnm-lang/yixue-assistant" class="hover:text-white/80 transition">GitHub</a>
+                </div>
             </div>
         </div>
+    </nav>
 
-        <div class="buttons">
-            <a href="/yixue-assistant/preview.html" class="btn btn-primary">查看完整预览</a>
-            <a href="https://github.com/yy2rj7qrnm-lang/yixue-assistant" class="btn btn-secondary">GitHub</a>
+    <!-- 主视觉区域 -->
+    <section class="gradient-primary text-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-block bg-white/20 px-4 py-2 rounded-full text-sm mb-6">
+                        🚀 基于团中央《"人工智能+教育"行动计划》
+                    </div>
+                    <h1 class="text-5xl font-bold mb-6 leading-tight">
+                        AI赋能个性化学习<br>让每个孩子都有专属学习伙伴
+                    </h1>
+                    <p class="text-xl text-white/90 mb-8">
+                        融合OCR识别、智能诊断、精准推题于一体的AI教育平台
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="yixue-assistant/preview.html" class="bg-white text-purple-600 px-8 py-3 rounded-xl font-semibold hover:bg-white/90 transition">
+                            查看产品预览
+                        </a>
+                        <a href="https://github.com/yy2rj7qrnm-lang/yixue-assistant" class="border border-white/50 px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
+                            查看代码
+                        </a>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="phone-mockup bg-white p-4">
+                        <div class="text-center mb-4">
+                            <span class="text-purple-600 font-bold text-lg">学习概况</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-3 rounded-xl">
+                                <div class="text-2xl font-bold">87%</div>
+                                <div class="text-sm">正确率</div>
+                            </div>
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-3 rounded-xl">
+                                <div class="text-2xl font-bold">128</div>
+                                <div class="text-sm">今日刷题</div>
+                            </div>
+                            <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-xl">
+                                <div class="text-2xl font-bold">15</div>
+                                <div class="text-sm">待复习</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- 功能特点 -->
+    <section id="features" class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">核心功能</h2>
+                <p class="text-xl text-gray-600">四大核心模块，全方位助力学习</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
+                        <span class="text-3xl">📷</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">智能错题识别</h3>
+                    <p class="text-gray-600">OCR技术识别错题，支持手写体和印刷体，自动按知识点、难度分类</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
+                        <span class="text-3xl">📊</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">个性化学习诊断</h3>
+                    <p class="text-gray-600">雷达图展示多维度学习情况，精准定位薄弱环节</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-4">
+                        <span class="text-3xl">🎯</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">智能推题系统</h3>
+                    <p class="text-gray-600">基于诊断结果推荐匹配难度的题目，构建知识闭环</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                        <span class="text-3xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">AI智能伴学</h3>
+                    <p class="text-gray-600">24小时在线答疑，提供学习方法指导和心理激励</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术架构 -->
+    <section id="tech" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">技术架构</h2>
+                <p class="text-xl text-gray-600">现代化技术栈，确保高性能与可扩展性</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="gradient-card rounded-2xl p-8 border border-purple-200">
+                    <h3 class="text-xl font-bold text-purple-600 mb-4">前端技术</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>React Native + TypeScript</li>
+                        <li>跨平台（iOS/Android）</li>
+                        <li>Redux Toolkit 状态管理</li>
+                        <li>Lottie + React Spring 动画</li>
+                    </ul>
+                </div>
+
+                <div class="gradient-card rounded-2xl p-8 border border-green-200">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">后端技术</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>Node.js + Express/Koa</li>
+                        <li>MySQL + Redis + MongoDB</li>
+                        <li>Prisma ORM</li>
+                        <li>JWT 认证</li>
+                    </ul>
+                </div>
+
+                <div class="gradient-card rounded-2xl p-8 border border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-600 mb-4">AI服务</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>Python + PyTorch/TensorFlow</li>
+                        <li>百度OCR / 腾讯OCR</li>
+                        <li>BERT / ERNIE NLP模型</li>
+                        <li>知识图谱构建</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🎓</span>
+                    <span class="text-xl font-bold">意学助手</span>
+                </div>
+                <div class="text-gray-400">
+                    <a href="https://github.com/yy2rj7qrnm-lang/yixue-assistant" class="hover:text-white transition">GitHub</a>
+                </div>
+            </div>
+            <div class="text-center text-gray-500 mt-8">
+                基于《"人工智能+教育"行动计划》构建的智能教育平台
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
