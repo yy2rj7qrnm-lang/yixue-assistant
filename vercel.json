@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/yixue-assistant/:path*",
+      "destination": "/yixue-assistant/:path*"
+    }
+  ]
+}
