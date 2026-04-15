@@ -1,0 +1,40 @@
+{
+  "name": "yixue-assistant",
+  "version": "1.0.0",
+  "description": "AI教育意学助手 - 个性化学习解决方案",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd mobile && npm run dev\" \"cd backend && npm run dev\"",
+    "dev:mobile": "cd mobile && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "android": "cd mobile && npm run android",
+    "ios": "cd mobile && npm run ios",
+    "build": "npm run build:mobile && npm run build:backend",
+    "build:mobile": "cd mobile && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "test": "npm run test:mobile && npm run test:backend",
+    "test:mobile": "cd mobile && npm test",
+    "test:backend": "cd backend && npm test",
+    "lint": "npm run lint:mobile && npm run lint:backend",
+    "lint:mobile": "cd mobile && npm run lint",
+    "lint:backend": "cd backend && npm run lint"
+  },
+  "keywords": [
+    "ai",
+    "education",
+    "react-native",
+    "learning-assistant",
+    "ocr",
+    "machine-learning"
+  ],
+  "author": "郑力维",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "workspaces": [
+    "mobile",
+    "backend",
+    "shared"
+  ]
+}

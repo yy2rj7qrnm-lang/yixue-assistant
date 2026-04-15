@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>意学助手 - 预览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            border-radius: 40px;
+            border: 12px solid #1a1a1a;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .screen-content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .gradient-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-8">
+    <div class="flex gap-8 items-start">
+        <!-- Phone 1: 首页 -->
+        <div class="phone-frame bg-gray-50">
+            <div class="screen-content">
+                <!-- Status Bar -->
+                <div class="bg-white px-6 py-2 flex justify-between items-center">
+                    <span class="text-xs">9:41</span>
+                    <div class="flex gap-1">
+                        <i class="fas fa-signal text-xs"></i>
+                        <i class="fas fa-wifi text-xs"></i>
+                        <i class="fas fa-battery-full text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="px-5 pt-4 pb-3 bg-white">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-500 text-sm">你好！</p>
+                            <h1 class="text-2xl font-bold text-gray-900">今天也要努力学习</h1>
+                        </div>
+                        <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bell text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Today Stats -->
+                <div class="px-5 py-4">
+                    <div class="bg-white rounded-2xl p-5 card-shadow">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold">今日学习进度</h2>
+                            <button class="text-indigo-600">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-between mb-4">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-indigo-600">60</p>
+                                <p class="text-xs text-gray-500">分钟</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-red-500">8</p>
+                                <p class="text-xs text-gray-500">题目</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-500">2</p>
+                                <p class="text-xs text-gray-500">错题</p>
+                            </div>
+                        </div>
+                        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-600 rounded-full" style="width: 60%"></div>
+                        </div>
+                        <p class="text-right text-xs text-gray-500 mt-2">今日目标完成度: 60%</p>
+                    </div>
+                </div>
+
+                <!-- Core Features -->
+                <div class="px-5 py-2">
+                    <h2 class="text-lg font-semibold mb-3">核心功能</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white rounded-xl p-4 card-shadow">
+                            <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-book-open text-red-500 text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold mb-1">错题本</h3>
+                            <p class="text-xs text-gray-500">智能识别，归类整理</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 card-shadow">
+                            <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-graduation-cap text-indigo-500 text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold mb-1">学习</h3>
+                            <p class="text-xs text-gray-500">个性化学习路径</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 card-shadow">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-chart-line text-green-500 text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold mb-1">学习报告</h3>
+                            <p class="text-xs text-gray-500">深度分析学习状况</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 card-shadow">
+                            <div class="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center mb-3">
+                                <i class="fas fa-brain text-yellow-500 text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold mb-1">知识图谱</h3>
+                            <p class="text-xs text-gray-500">构建知识体系</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
+                    <div class="flex justify-between">
+                        <button class="text-indigo-600">
+                            <i class="fas fa-home text-xl"></i>
+                            <p class="text-xs mt-1">首页</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-book-open text-xl"></i>
+                            <p class="text-xs mt-1">错题</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-graduation-cap text-xl"></i>
+                            <p class="text-xs mt-1">学习</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-chart-line text-xl"></i>
+                            <p class="text-xs mt-1">报告</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-user text-xl"></i>
+                            <p class="text-xs mt-1">我的</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 2: 错题本 -->
+        <div class="phone-frame bg-gray-50">
+            <div class="screen-content pb-20">
+                <!-- Status Bar -->
+                <div class="bg-white px-6 py-2 flex justify-between items-center">
+                    <span class="text-xs">9:41</span>
+                    <div class="flex gap-1">
+                        <i class="fas fa-signal text-xs"></i>
+                        <i class="fas fa-wifi text-xs"></i>
+                        <i class="fas fa-battery-full text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="bg-white px-5 pt-4 pb-3 border-b border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-xl font-bold">错题本</h1>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            <i class="fas fa-camera mr-2"></i>拍照识别
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="px-5 py-4 bg-white border-b border-gray-100">
+                    <div class="flex justify-around">
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-gray-900">25</p>
+                            <p class="text-xs text-gray-500">总错题</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-green-600">18</p>
+                            <p class="text-xs text-gray-500">已解决</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-red-500">7</p>
+                            <p class="text-xs text-gray-500">待解决</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="px-5 py-3 flex gap-2 bg-white">
+                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm">全部</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">未解决</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">已解决</button>
+                </div>
+
+                <!-- Mistakes List -->
+                <div class="px-5 py-4 space-y-3">
+                    <!-- Mistake Card 1 -->
+                    <div class="bg-white rounded-xl p-4 card-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-medium">数学</span>
+                                <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-medium">中等</span>
+                            </div>
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                        <p class="text-gray-800 text-sm mb-3">求解方程 2x + 3 = 7</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">4月15日</span>
+                            <div class="flex gap-2">
+                                <button class="text-indigo-600 text-xs"><i class="fas fa-eye mr-1"></i>查看</button>
+                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mistake Card 2 -->
+                    <div class="bg-white rounded-xl p-4 card-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">物理</span>
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-xs font-medium">困难</span>
+                            </div>
+                            <i class="fas fa-circle text-gray-300"></i>
+                        </div>
+                        <p class="text-gray-800 text-sm mb-3">一个物体从高度h自由落下，落地时的速度是多少？</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">4月14日</span>
+                            <div class="flex gap-2">
+                                <button class="bg-green-600 text-white px-3 py-1 rounded-full text-xs"><i class="fas fa-check mr-1"></i>解决</button>
+                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mistake Card 3 -->
+                    <div class="bg-white rounded-xl p-4 card-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-medium">化学</span>
+                                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">简单</span>
+                            </div>
+                            <i class="fas fa-circle text-gray-300"></i>
+                        </div>
+                        <p class="text-gray-800 text-sm mb-3">计算NaCl的摩尔质量</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">4月13日</span>
+                            <div class="flex gap-2">
+                                <button class="bg-green-600 text-white px-3 py-1 rounded-full text-xs"><i class="fas fa-check mr-1"></i>解决</button>
+                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
+                    <div class="flex justify-between">
+                        <button class="text-gray-400">
+                            <i class="fas fa-home text-xl"></i>
+                            <p class="text-xs mt-1">首页</p>
+                        </button>
+                        <button class="text-indigo-600">
+                            <i class="fas fa-book-open text-xl"></i>
+                            <p class="text-xs mt-1">错题</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-graduation-cap text-xl"></i>
+                            <p class="text-xs mt-1">学习</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-chart-line text-xl"></i>
+                            <p class="text-xs mt-1">报告</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-user text-xl"></i>
+                            <p class="text-xs mt-1">我的</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 3: 学习页面 -->
+        <div class="phone-frame bg-gray-50">
+            <div class="screen-content pb-20">
+                <!-- Status Bar -->
+                <div class="bg-white px-6 py-2 flex justify-between items-center">
+                    <span class="text-xs">9:41</span>
+                    <div class="flex gap-1">
+                        <i class="fas fa-signal text-xs"></i>
+                        <i class="fas fa-wifi text-xs"></i>
+                        <i class="fas fa-battery-full text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="bg-white px-5 pt-4 pb-3">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-xl font-bold">学习中心</h1>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm">
+                            <i class="fas fa-brain mr-2"></i>AI助手
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Card -->
+                <div class="px-5 py-4">
+                    <div class="bg-white rounded-xl p-4 card-shadow">
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="font-semibold">今日学习进度</h2>
+                            <button class="text-indigo-600"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div class="flex justify-around mb-3">
+                            <div class="text-center">
+                                <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-1">
+                                    <i class="fas fa-clock text-blue-600"></i>
+                                </div>
+                                <p class="text-lg font-bold">60分钟</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-1">
+                                    <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                </div>
+                                <p class="text-lg font-bold">8题</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-1">
+                                    <i class="fas fa-fire text-green-500"></i>
+                                </div>
+                                <p class="text-lg font-bold">7天</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Goals -->
+                <div class="px-5 py-2">
+                    <h2 class="font-semibold mb-3">今日学习计划</h2>
+                    <div class="space-y-2">
+                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
+                            <i class="far fa-circle text-gray-300 text-xl mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">完成5道数学题</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300"></i>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
+                            <i class="far fa-circle text-gray-300 text-xl mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">复习2个物理错题</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300"></i>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-400 line-through">完成化学练习</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Recommendations -->
+                <div class="px-5 py-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-semibold">AI学习推荐</h2>
+                        <button class="text-indigo-600 text-sm">生成新推荐</button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-quiz text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium mb-1">建议复习方程错题</p>
+                                    <span class="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">优先级 8</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-300"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-100">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-school text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium mb-1">学习代数基础知识</p>
+                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">优先级 7</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
+                    <div class="flex justify-between">
+                        <button class="text-gray-400">
+                            <i class="fas fa-home text-xl"></i>
+                            <p class="text-xs mt-1">首页</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-book-open text-xl"></i>
+                            <p class="text-xs mt-1">错题</p>
+                        </button>
+                        <button class="text-indigo-600">
+                            <i class="fas fa-graduation-cap text-xl"></i>
+                            <p class="text-xs mt-1">学习</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-chart-line text-xl"></i>
+                            <p class="text-xs mt-1">报告</p>
+                        </button>
+                        <button class="text-gray-400">
+                            <i class="fas fa-user text-xl"></i>
+                            <p class="text-xs mt-1">我的</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-2xl p-6 w-80 transform transition-all" id="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-lg font-bold"></h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg transform -translate-y-20 transition-transform z-50">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        // State management
+        let activePhone = 0;
+        let activeScreen = 'home';
+        let goals = [
+            { id: 1, text: '完成5道数学题', completed: false },
+            { id: 2, text: '复习2个物理错题', completed: false },
+            { id: 3, text: '完成化学练习', completed: true }
+        ];
+        let filterTab = 'all';
+
+        // Navigation click handlers
+        function setupNavigation() {
+            document.querySelectorAll('.phone-frame').forEach((phone, phoneIndex) => {
+                phone.querySelectorAll('.screen-content button').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 100);
+                    });
+                });
+
+                // Bottom navigation
+                phone.querySelectorAll('.screen-content > div:last-of-type button').forEach((navBtn, navIndex) => {
+                    navBtn.addEventListener('click', () => {
+                        switchScreen(phoneIndex, navIndex);
+                    });
+                });
+
+                // Camera button
+                const cameraBtn = phone.querySelector('button:has(.fa-camera)');
+                if (cameraBtn) {
+                    cameraBtn.addEventListener('click', () => showModal('camera'));
+                }
+
+                // AI Assistant button
+                const aiBtn = phone.querySelector('button:has(.fa-brain)');
+                if (aiBtn) {
+                    aiBtn.addEventListener('click', () => showModal('ai'));
+                }
+
+                // Filter tabs
+                phone.querySelectorAll('.px-5.py-3 button').forEach((tab, tabIndex) => {
+                    tab.addEventListener('click', () => {
+                        setFilterTab(phoneIndex, tabIndex);
+                    });
+                });
+
+                // Goal checkboxes
+                phone.querySelectorAll('.fa-circle, .fa-check-circle').forEach((icon) => {
+                    icon.addEventListener('click', (e) => {
+                        toggleGoal(e.target);
+                    });
+                });
+
+                // Recommendation cards
+                phone.querySelectorAll('.bg-gradient-to-r').forEach((card) => {
+                    card.addEventListener('click', () => {
+                        showToast('正在打开学习内容...');
+                    });
+                });
+            });
+        }
+
+        function switchScreen(phoneIndex, screenIndex) {
+            const screens = ['首页', '错题', '学习', '报告', '我的'];
+            showToast(`切换到${screens[screenIndex]}页面`);
+            updateNavStates(phoneIndex, screenIndex);
+        }
+
+        function updateNavStates(phoneIndex, activeIndex) {
+            const phone = document.querySelectorAll('.phone-frame')[phoneIndex];
+            const navButtons = phone.querySelectorAll('.screen-content > div:last-of-type button');
+            navButtons.forEach((btn, i) => {
+                if (i === activeIndex) {
+                    btn.classList.remove('text-gray-400');
+                    btn.classList.add('text-indigo-600');
+                } else {
+                    btn.classList.remove('text-indigo-600');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+        }
+
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+
+            modal.classList.remove('hidden');
+
+            if (type === 'camera') {
+                title.textContent = '拍照识别错题';
+                body.innerHTML = `
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-camera text-indigo-600 text-3xl"></i>
+                        </div>
+                        <p class="text-gray-600 mb-4">将题目放入框内，系统会自动识别</p>
+                        <button onclick="startCamera()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium">
+                            <i class="fas fa-camera mr-2"></i>打开相机
+                        </button>
+                        <button onclick="uploadImage()" class="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-medium mt-2">
+                            <i class="fas fa-image mr-2"></i>从相册选择
+                        </button>
+                    </div>
+                `;
+            } else if (type === 'ai') {
+                title.textContent = 'AI学习助手';
+                body.innerHTML = `
+                    <div class="space-y-3">
+                        <button onclick="askQuestion()" class="w-full bg-indigo-100 text-indigo-700 py-3 rounded-xl font-medium">
+                            <i class="fas fa-question-circle mr-2"></i>智能问答
+                        </button>
+                        <button onclick="getRecommendation()" class="w-full bg-green-100 text-green-700 py-3 rounded-xl font-medium">
+                            <i class="fas fa-lightbulb mr-2"></i>学习建议
+                        </button>
+                        <button onclick="voiceChat()" class="w-full bg-purple-100 text-purple-700 py-3 rounded-xl font-medium">
+                            <i class="fas fa-microphone mr-2"></i>语音对话
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -5rem)';
+            }, 2000);
+        }
+
+        function setFilterTab(phoneIndex, tabIndex) {
+            const phone = document.querySelectorAll('.phone-frame')[phoneIndex];
+            const tabs = phone.querySelectorAll('.px-5.py-3 button');
+            const labels = ['全部', '未解决', '已解决'];
+
+            tabs.forEach((tab, i) => {
+                if (i === tabIndex) {
+                    tab.classList.remove('bg-gray-100', 'text-gray-700');
+                    tab.classList.add('bg-indigo-600', 'text-white');
+                } else {
+                    tab.classList.remove('bg-indigo-600', 'text-white');
+                    tab.classList.add('bg-gray-100', 'text-gray-700');
+                }
+            });
+
+            filterTab = labels[tabIndex].toLowerCase();
+            showToast(`筛选: ${labels[tabIndex]}`);
+        }
+
+        function toggleGoal(icon) {
+            const parent = icon.closest('.bg-white.rounded-xl');
+            const textElement = parent.querySelector('p');
+            const isChecked = icon.classList.contains('fa-check-circle');
+
+            if (isChecked) {
+                icon.classList.remove('fa-check-circle', 'text-green-500');
+                icon.classList.add('fa-circle', 'text-gray-300');
+                textElement.classList.remove('text-gray-400', 'line-through');
+                showToast('已取消完成');
+            } else {
+                icon.classList.remove('fa-circle', 'text-gray-300');
+                icon.classList.add('fa-check-circle', 'text-green-500');
+                textElement.classList.add('text-gray-400', 'line-through');
+                showToast('🎉 太棒了！完成一项学习目标');
+            }
+        }
+
+        // Modal actions
+        function startCamera() {
+            closeModal();
+            showToast('正在打开相机...');
+        }
+
+        function uploadImage() {
+            closeModal();
+            showToast('请选择图片');
+        }
+
+        function askQuestion() {
+            closeModal();
+            showToast('AI正在为您解答...');
+        }
+
+        function getRecommendation() {
+            closeModal();
+            showToast('正在生成个性化建议...');
+        }
+
+        function voiceChat() {
+            closeModal();
+            showToast('请开始说话...');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
