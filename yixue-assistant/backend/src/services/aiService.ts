@@ -271,9 +271,6 @@ class OpenAIService implements AIService {
   }
 
   async analyzeMistake(question: string, answer: string, correctAnswer: string): Promise<MistakeAnalysis> {
-    // 实现与Claude类似的分析逻辑
-    const prompt = `你是一位专业的教育分析师，请分析以下学生的错题...
-
     // 使用相同的分析逻辑
     return {
       mistakeType: ['concept_error'],

@@ -96,6 +96,7 @@ router.post(
       correctAnswer,
       subject,
       grade,
+      chapter,
       questionType,
       knowledgePoints,
     } = req.body;
@@ -115,6 +116,7 @@ router.post(
         correctAnswer,
         subject: subject || 'MATH',
         grade: grade || 'GRADE_10',
+        chapter: chapter || '未分类',
         questionType: questionType || 'SHORT_ANSWER',
         difficulty: 'MEDIUM',
         analysis: '', // 可以从AI服务获取

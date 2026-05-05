@@ -1,8 +1,10 @@
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-import sharp from 'sharp';
 import { ocrLogger } from '../utils/logger';
+
+let sharp: any = null;
+try { sharp = require('sharp'); } catch (e) { /* sharp not available */ }
 
 // OCR服务接口
 interface OCRService {
@@ -215,6 +217,8 @@ class TencentOCRService implements OCRService {
 export class ImagePreprocessor {
   static async validateAndOptimize(imagePath: string): Promise<string> {
     try {
+      if (!sharp) return imagePath; // skip if sharp not available
+
       const metadata = await sharp(imagePath).metadata();
 
       // 检查图片格式
@@ -248,8 +252,8 @@ export class ImagePreprocessor {
 
   static async cropQuestionArea(imagePath: string): Promise<string> {
     try {
-      // 这里可以实现自动裁剪题目区域的逻辑
-      // 暂时返回原路径
+      if (!sharp) return imagePath; // skip if sharp not available
+
       const croppedPath = path.join(
         path.dirname(imagePath),
         `cropped_${path.basename(imagePath)}`

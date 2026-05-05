@@ -153,15 +153,15 @@ router.post(
     const report = await prisma.report.create({
       data: {
         userId,
-        reportType: reportType as any,
-        period: {
+        reportType: reportType as string,
+        period: JSON.stringify({
           start: startDate,
           end: endDate,
-        },
+        }),
         totalMistakes,
         solvedMistakes,
         correctRate,
-        knowledgePoints: knowledgePointsData,
+        knowledgePoints: JSON.stringify(knowledgePointsData),
         studyTime,
         averageDailyStudyTime,
         streakDays,
@@ -302,10 +302,10 @@ async function calculateStreakDays(userId: string): Promise<number> {
   return streak;
 }
 
-async function calculateKnowledgePoints(userId: string): any {
+async function calculateKnowledgePoints(userId: string): Promise<any> {
   const mistakes = await prisma.mistake.findMany({
     where: { userId },
-    select: { knowledgePoints: true },
+    select: { knowledgePoints: true, isSolved: true },
   });
 
   const knowledgeMap = new Map<string, { count: number; mastery: number }>();

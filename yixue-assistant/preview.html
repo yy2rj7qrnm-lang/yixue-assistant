@@ -3,682 +3,950 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>意学助手 - 预览</title>
+    <title>意学助手 - 产品预览</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            font-family: 'Inter', sans-serif;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#FDFCF8',
+                        foreground: '#2C2C24',
+                        primary: '#5D7052',
+                        'primary-fg': '#F3F4F1',
+                        secondary: '#C18C5D',
+                        'secondary-fg': '#FFFFFF',
+                        accent: '#E6DCCD',
+                        'accent-fg': '#4A4A40',
+                        muted: '#F0EBE5',
+                        'muted-fg': '#78786C',
+                        border: '#DED8CF',
+                        destructive: '#A85448',
+                    },
+                    fontFamily: {
+                        serif: ['Noto Serif SC', 'serif'],
+                        sans: ['Nunito', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                }
+            }
         }
+    </script>
+    <style>
         .phone-frame {
             width: 375px;
             height: 812px;
             border-radius: 40px;
-            border: 12px solid #1a1a1a;
+            border: 10px solid #2C2C24;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(93, 112, 82, 0.25);
+            position: relative;
         }
         .screen-content {
             height: 100%;
             overflow-y: auto;
             scrollbar-width: none;
+            position: relative;
         }
-        .screen-content::-webkit-scrollbar {
-            display: none;
+        .screen-content::-webkit-scrollbar { display: none; }
+        .screen-noise {
+            position: absolute; inset: 0; pointer-events: none; z-index: 99;
+            mix-blend-mode: multiply; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
-        .gradient-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .screen-panel { display: none; position: relative; z-index: 10; min-height: 100%; padding-bottom: 64px; }
+        .screen-panel.active { display: block; }
+        /* Report bar chart */
+        .bar-fill { transition: width 0.6s ease-out, height 0.6s ease-out; }
+        /* Welcome overlay transition */
+        .overlay-out { opacity: 0; transform: translateY(-20px); pointer-events: none; transition: all 0.4s ease-out; }
+        @media (max-height: 850px) {
+            .phone-frame { transform: scale(0.85); margin-top: -40px; }
         }
-        .gradient-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-        .gradient-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-        }
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        @media (max-height: 700px) {
+            .phone-frame { transform: scale(0.7); margin-top: -80px; }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-8">
-    <div class="flex gap-8 items-start">
-        <!-- Phone 1: 首页 -->
-        <div class="phone-frame bg-gray-50">
-            <div class="screen-content">
-                <!-- Status Bar -->
-                <div class="bg-white px-6 py-2 flex justify-between items-center">
-                    <span class="text-xs">9:41</span>
-                    <div class="flex gap-1">
-                        <i class="fas fa-signal text-xs"></i>
-                        <i class="fas fa-wifi text-xs"></i>
-                        <i class="fas fa-battery-full text-xs"></i>
-                    </div>
-                </div>
+<body class="bg-background min-h-screen font-sans">
 
-                <!-- Header -->
-                <div class="px-5 pt-4 pb-3 bg-white">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-gray-500 text-sm">你好！</p>
-                            <h1 class="text-2xl font-bold text-gray-900">今天也要努力学习</h1>
+    <!-- Demo notice banner -->
+    <div class="fixed top-0 left-0 right-0 bg-primary/10 backdrop-blur-sm border-b border-primary/20 z-[100]">
+        <p class="text-center text-xs text-primary py-1.5 font-medium">
+            <i class="fas fa-info-circle mr-1"></i>静态演示版 · 仅展示产品功能 <span class="text-muted-fg">|</span> <a href="../index.html" class="underline hover:text-primary/70">← 返回首页</a>
+        </p>
+    </div>
+
+    <!-- Global noise -->
+    <svg class="fixed inset-0 w-full h-full pointer-events-none z-[9999]" aria-hidden="true">
+        <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)" style="mix-blend-mode:multiply;opacity:0.035"/>
+    </svg>
+
+    <!-- Phone Container -->
+    <div class="flex items-center justify-center min-h-screen pt-8 pb-4 px-4">
+        <div class="phone-frame bg-background">
+
+            <!-- Status Bar -->
+            <div class="absolute top-0 left-0 right-0 bg-white/95 backdrop-blur-sm px-6 py-2 flex justify-between items-center z-20">
+                <span class="text-xs text-muted-fg font-sans">9:41</span>
+                <div class="flex gap-1 text-muted-fg">
+                    <i class="fas fa-signal text-xs"></i>
+                    <i class="fas fa-wifi text-xs"></i>
+                    <i class="fas fa-battery-full text-xs"></i>
+                </div>
+            </div>
+
+            <div class="screen-content" id="main-screen">
+                <div class="screen-noise"></div>
+
+                <!-- ====== Welcome Overlay ====== -->
+                <div id="screen-welcome" class="screen-panel active flex items-center justify-center" style="background: linear-gradient(135deg, #5D7052 0%, #3D4F35 100%); min-height: 100%;">
+                    <div class="text-center px-8">
+                        <div class="w-20 h-20 bg-white/20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+                            <span class="text-4xl">🎓</span>
                         </div>
-                        <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-bell text-gray-600"></i>
+                        <h1 class="font-serif text-4xl font-black text-white mb-2">意学助手</h1>
+                        <p class="text-white/70 text-sm mb-8">AI 智能教育平台</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-white/60 text-xs justify-center">
+                                <i class="fas fa-check-circle text-white/40"></i><span>智能错题识别与分析</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-white/60 text-xs justify-center">
+                                <i class="fas fa-check-circle text-white/40"></i><span>个性化学习路径规划</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-white/60 text-xs justify-center">
+                                <i class="fas fa-check-circle text-white/40"></i><span>AI 驱动智能推题系统</span>
+                            </div>
+                        </div>
+                        <button onclick="dismissWelcome()" class="mt-8 bg-white text-primary px-10 py-3.5 rounded-full font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)]">
+                            开始体验
                         </button>
+                        <p class="text-white/30 text-xs mt-4">点击即可进入演示</p>
                     </div>
                 </div>
 
-                <!-- Today Stats -->
-                <div class="px-5 py-4">
-                    <div class="bg-white rounded-2xl p-5 card-shadow">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-semibold">今日学习进度</h2>
-                            <button class="text-indigo-600">
-                                <i class="fas fa-sync-alt"></i>
+                <!-- ====== 1. Home Screen ====== -->
+                <div id="screen-home" class="screen-panel bg-background">
+                    <div class="px-5 pt-4 pb-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-muted-fg text-xs font-sans">你好！</p>
+                                <h1 class="font-serif text-xl font-bold text-foreground" id="home-username">今天也要努力学习</h1>
+                            </div>
+                            <button class="w-9 h-9 bg-muted rounded-full flex items-center justify-center" onclick="showToast('暂无新消息')">
+                                <i class="fas fa-bell text-muted-fg"></i>
                             </button>
                         </div>
-                        <div class="flex justify-between mb-4">
-                            <div class="text-center">
-                                <p class="text-2xl font-bold text-indigo-600">60</p>
-                                <p class="text-xs text-gray-500">分钟</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-2xl font-bold text-red-500">8</p>
-                                <p class="text-xs text-gray-500">题目</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-2xl font-bold text-green-500">2</p>
-                                <p class="text-xs text-gray-500">错题</p>
-                            </div>
-                        </div>
-                        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-600 rounded-full" style="width: 60%"></div>
-                        </div>
-                        <p class="text-right text-xs text-gray-500 mt-2">今日目标完成度: 60%</p>
                     </div>
-                </div>
 
-                <!-- Core Features -->
-                <div class="px-5 py-2">
-                    <h2 class="text-lg font-semibold mb-3">核心功能</h2>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-white rounded-xl p-4 card-shadow">
-                            <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-3">
-                                <i class="fas fa-book-open text-red-500 text-xl"></i>
+                    <!-- Stats Grid 2x2 -->
+                    <div class="px-5 pb-3 grid grid-cols-2 gap-2.5">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="w-9 h-9 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
+                                <i class="fas fa-check-circle text-primary text-lg"></i>
                             </div>
-                            <h3 class="font-semibold mb-1">错题本</h3>
-                            <p class="text-xs text-gray-500">智能识别，归类整理</p>
+                            <p class="font-sans text-2xl font-bold text-primary" id="stat-correctRate">87.3%</p>
+                            <p class="text-xs text-muted-fg">正确率</p>
                         </div>
-                        <div class="bg-white rounded-xl p-4 card-shadow">
-                            <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mb-3">
-                                <i class="fas fa-graduation-cap text-indigo-500 text-xl"></i>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="w-9 h-9 bg-secondary/10 rounded-2xl flex items-center justify-center mb-2">
+                                <i class="fas fa-pen text-secondary text-lg"></i>
                             </div>
-                            <h3 class="font-semibold mb-1">学习</h3>
-                            <p class="text-xs text-gray-500">个性化学习路径</p>
+                            <p class="font-sans text-2xl font-bold text-foreground" id="stat-totalQuestions">342</p>
+                            <p class="text-xs text-muted-fg">做题总数</p>
                         </div>
-                        <div class="bg-white rounded-xl p-4 card-shadow">
-                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
-                                <i class="fas fa-chart-line text-green-500 text-xl"></i>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="w-9 h-9 bg-accent rounded-2xl flex items-center justify-center mb-2">
+                                <i class="fas fa-fire text-secondary text-lg"></i>
                             </div>
-                            <h3 class="font-semibold mb-1">学习报告</h3>
-                            <p class="text-xs text-gray-500">深度分析学习状况</p>
+                            <p class="font-sans text-2xl font-bold text-foreground" id="stat-streak">7</p>
+                            <p class="text-xs text-muted-fg">连续学习天数</p>
                         </div>
-                        <div class="bg-white rounded-xl p-4 card-shadow">
-                            <div class="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center mb-3">
-                                <i class="fas fa-brain text-yellow-500 text-xl"></i>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="w-9 h-9 bg-destructive/10 rounded-2xl flex items-center justify-center mb-2">
+                                <i class="fas fa-exclamation-triangle text-destructive text-lg"></i>
                             </div>
-                            <h3 class="font-semibold mb-1">知识图谱</h3>
-                            <p class="text-xs text-gray-500">构建知识体系</p>
+                            <p class="font-sans text-2xl font-bold text-destructive" id="stat-pending">7</p>
+                            <p class="text-xs text-muted-fg">待复习错题</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Bottom Navigation -->
-                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
-                    <div class="flex justify-between">
-                        <button class="text-indigo-600">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-book-open text-xl"></i>
-                            <p class="text-xs mt-1">错题</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-graduation-cap text-xl"></i>
-                            <p class="text-xs mt-1">学习</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-chart-line text-xl"></i>
-                            <p class="text-xs mt-1">报告</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phone 2: 错题本 -->
-        <div class="phone-frame bg-gray-50">
-            <div class="screen-content pb-20">
-                <!-- Status Bar -->
-                <div class="bg-white px-6 py-2 flex justify-between items-center">
-                    <span class="text-xs">9:41</span>
-                    <div class="flex gap-1">
-                        <i class="fas fa-signal text-xs"></i>
-                        <i class="fas fa-wifi text-xs"></i>
-                        <i class="fas fa-battery-full text-xs"></i>
-                    </div>
-                </div>
-
-                <!-- Header -->
-                <div class="bg-white px-5 pt-4 pb-3 border-b border-gray-100">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-xl font-bold">错题本</h1>
-                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-                            <i class="fas fa-camera mr-2"></i>拍照识别
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="px-5 py-4 bg-white border-b border-gray-100">
-                    <div class="flex justify-around">
-                        <div class="text-center">
-                            <p class="text-xl font-bold text-gray-900">25</p>
-                            <p class="text-xs text-gray-500">总错题</p>
+                    <!-- Weekly Progress Bar -->
+                    <div class="px-5 pb-4">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold text-foreground">本周学习进度</span>
+                                <span class="text-xs text-muted-fg" id="progress-label">87%</span>
+                            </div>
+                            <div class="h-2.5 bg-muted rounded-full overflow-hidden">
+                                <div class="h-full bg-primary rounded-full transition-all duration-700" id="progress-bar" style="width: 87%"></div>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <p class="text-xl font-bold text-green-600">18</p>
-                            <p class="text-xs text-gray-500">已解决</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-xl font-bold text-red-500">7</p>
-                            <p class="text-xs text-gray-500">待解决</p>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="px-5">
+                        <h2 class="font-serif font-bold text-base text-foreground mb-2.5">核心功能</h2>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button onclick="navigate('mistakes')" class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] hover:-translate-y-0.5 transition-all duration-300 text-left">
+                                <div class="w-10 h-10 bg-destructive/10 rounded-2xl flex items-center justify-center mb-2">
+                                    <i class="fas fa-book-open text-destructive text-lg"></i>
+                                </div>
+                                <h3 class="font-serif font-bold text-sm text-foreground mb-0.5">错题本</h3>
+                                <p class="text-xs text-muted-fg">智能识别归类</p>
+                            </button>
+                            <button onclick="navigate('study')" class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] hover:-translate-y-0.5 transition-all duration-300 text-left">
+                                <div class="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
+                                    <i class="fas fa-graduation-cap text-primary text-lg"></i>
+                                </div>
+                                <h3 class="font-serif font-bold text-sm text-foreground mb-0.5">学习</h3>
+                                <p class="text-xs text-muted-fg">个性化学习路径</p>
+                            </button>
+                            <button onclick="navigate('report')" class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] hover:-translate-y-0.5 transition-all duration-300 text-left">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-2xl flex items-center justify-center mb-2">
+                                    <i class="fas fa-chart-line text-secondary text-lg"></i>
+                                </div>
+                                <h3 class="font-serif font-bold text-sm text-foreground mb-0.5">学习报告</h3>
+                                <p class="text-xs text-muted-fg">深度分析数据</p>
+                            </button>
+                            <button onclick="navigate('profile')" class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] hover:-translate-y-0.5 transition-all duration-300 text-left">
+                                <div class="w-10 h-10 bg-accent rounded-2xl flex items-center justify-center mb-2">
+                                    <i class="fas fa-brain text-accent-fg text-lg"></i>
+                                </div>
+                                <h3 class="font-serif font-bold text-sm text-foreground mb-0.5">知识图谱</h3>
+                                <p class="text-xs text-muted-fg">构建知识体系</p>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filter Tabs -->
-                <div class="px-5 py-3 flex gap-2 bg-white">
-                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm">全部</button>
-                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">未解决</button>
-                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">已解决</button>
-                </div>
-
-                <!-- Mistakes List -->
-                <div class="px-5 py-4 space-y-3">
-                    <!-- Mistake Card 1 -->
-                    <div class="bg-white rounded-xl p-4 card-shadow">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex gap-2">
-                                <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-medium">数学</span>
-                                <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-medium">中等</span>
-                            </div>
-                            <i class="fas fa-check-circle text-green-500"></i>
-                        </div>
-                        <p class="text-gray-800 text-sm mb-3">求解方程 2x + 3 = 7</p>
+                <!-- ====== 2. Mistakes List Screen ====== -->
+                <div id="screen-mistakes" class="screen-panel bg-background">
+                    <div class="px-5 pt-4 pb-3 border-b border-border/20">
                         <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">4月15日</span>
-                            <div class="flex gap-2">
-                                <button class="text-indigo-600 text-xs"><i class="fas fa-eye mr-1"></i>查看</button>
-                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
+                            <h1 class="font-serif font-bold text-xl text-foreground">错题本</h1>
+                            <button class="bg-primary text-primary-fg px-3.5 py-2 rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.15)]" onclick="showToast('拍照识别功能将在完整版中提供')">
+                                <i class="fas fa-camera mr-1.5"></i>拍照
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="px-5 py-3 bg-white border-b border-border/20">
+                        <div class="flex justify-around" id="mistake-stats">
+                            <div class="text-center">
+                                <p class="font-sans text-xl font-bold text-foreground" id="ms-total">10</p>
+                                <p class="text-xs text-muted-fg">总错题</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-sans text-xl font-bold text-primary" id="ms-solved">6</p>
+                                <p class="text-xs text-muted-fg">已解决</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-sans text-xl font-bold text-destructive" id="ms-unsolved">4</p>
+                                <p class="text-xs text-muted-fg">待解决</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Mistake Card 2 -->
-                    <div class="bg-white rounded-xl p-4 card-shadow">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex gap-2">
-                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">物理</span>
-                                <span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-xs font-medium">困难</span>
-                            </div>
-                            <i class="fas fa-circle text-gray-300"></i>
-                        </div>
-                        <p class="text-gray-800 text-sm mb-3">一个物体从高度h自由落下，落地时的速度是多少？</p>
+                    <!-- Subject Filter -->
+                    <div class="px-5 py-2.5 flex gap-1.5 flex-wrap bg-white" id="subject-filters">
+                        <button class="px-3 py-1.5 bg-primary text-primary-fg rounded-full text-xs font-bold transition-all duration-300" data-subject="all">全部</button>
+                        <button class="px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-subject="MATH">数学</button>
+                        <button class="px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-subject="PHYSICS">物理</button>
+                        <button class="px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-subject="CHEMISTRY">化学</button>
+                        <button class="px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-subject="ENGLISH">英语</button>
+                        <button class="px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-subject="CHINESE">语文</button>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="px-5 py-2 flex gap-2 bg-white border-b border-border/20" id="status-filters">
+                        <button class="px-4 py-1.5 bg-primary text-primary-fg rounded-full text-xs font-bold transition-all duration-300" data-status="all">全部</button>
+                        <button class="px-4 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-status="unsolved">未解决</button>
+                        <button class="px-4 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300" data-status="solved">已解决</button>
+                    </div>
+
+                    <!-- Mistake Cards -->
+                    <div class="px-5 py-3 space-y-2.5" id="mistake-list"></div>
+                </div>
+
+                <!-- ====== 2a. Mistake Detail Screen ====== -->
+                <div id="screen-mistake-detail" class="screen-panel bg-background">
+                    <div class="px-4 pt-4 pb-3 flex items-center gap-3">
+                        <button onclick="navigate('mistakes')" class="w-8 h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/70 transition-all duration-300">
+                            <i class="fas fa-chevron-left text-foreground text-sm"></i>
+                        </button>
+                        <h1 class="font-serif font-bold text-lg text-foreground">错题详情</h1>
+                    </div>
+                    <div id="mistake-detail-content" class="px-5 space-y-3 pb-4"></div>
+                </div>
+
+                <!-- ====== 3. Study Screen ====== -->
+                <div id="screen-study" class="screen-panel bg-background">
+                    <div class="px-5 pt-4 pb-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">4月14日</span>
-                            <div class="flex gap-2">
-                                <button class="bg-green-600 text-white px-3 py-1 rounded-full text-xs"><i class="fas fa-check mr-1"></i>解决</button>
-                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
+                            <h1 class="font-serif font-bold text-xl text-foreground">学习中心</h1>
+                            <button class="bg-secondary text-secondary-fg px-3.5 py-2 rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.2)]" onclick="showToast('AI助手功能将在完整版中提供')">
+                                <i class="fas fa-brain mr-1.5"></i>AI助手
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="px-5 pb-3">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)]">
+                            <div class="flex justify-between items-center mb-3">
+                                <h2 class="font-serif font-bold text-sm text-foreground">今日学习进度</h2>
+                            </div>
+                            <div class="flex justify-around">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-1"><i class="fas fa-clock text-primary"></i></div>
+                                    <p class="font-sans text-lg font-bold text-foreground">90分钟</p>
+                                    <p class="text-xs text-muted-fg">学习时长</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto mb-1"><i class="fas fa-question-circle text-destructive"></i></div>
+                                    <p class="font-sans text-lg font-bold text-foreground">12题</p>
+                                    <p class="text-xs text-muted-fg">已做题目</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-1"><i class="fas fa-fire text-secondary"></i></div>
+                                    <p class="font-sans text-lg font-bold text-foreground">7天</p>
+                                    <p class="text-xs text-muted-fg">连续打卡</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Mistake Card 3 -->
-                    <div class="bg-white rounded-xl p-4 card-shadow">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex gap-2">
-                                <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-medium">化学</span>
-                                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">简单</span>
-                            </div>
-                            <i class="fas fa-circle text-gray-300"></i>
+                    <!-- Study Goals -->
+                    <div class="px-5 pb-3">
+                        <h2 class="font-serif font-bold text-sm text-foreground mb-2.5">今日学习计划</h2>
+                        <div class="space-y-2" id="goals-list"></div>
+                    </div>
+
+                    <!-- AI Recommendations -->
+                    <div class="px-5 pb-4">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <h2 class="font-serif font-bold text-sm text-foreground">AI 学习推荐</h2>
+                            <span class="text-xs text-muted-fg">基于错题分析</span>
                         </div>
-                        <p class="text-gray-800 text-sm mb-3">计算NaCl的摩尔质量</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500">4月13日</span>
-                            <div class="flex gap-2">
-                                <button class="bg-green-600 text-white px-3 py-1 rounded-full text-xs"><i class="fas fa-check mr-1"></i>解决</button>
-                                <button class="text-red-500 text-xs"><i class="fas fa-trash mr-1"></i>删除</button>
-                            </div>
+                        <div class="space-y-2" id="recs-list"></div>
+                    </div>
+                </div>
+
+                <!-- ====== 3a. Study Detail Screen ====== -->
+                <div id="screen-study-detail" class="screen-panel bg-background">
+                    <div class="px-4 pt-4 pb-3 flex items-center gap-3">
+                        <button onclick="navigate('study')" class="w-8 h-8 bg-muted rounded-full flex items-center justify-center hover:bg-muted/70 transition-all duration-300">
+                            <i class="fas fa-chevron-left text-foreground text-sm"></i>
+                        </button>
+                        <h1 class="font-serif font-bold text-lg text-foreground">推荐详情</h1>
+                    </div>
+                    <div id="study-detail-content" class="px-5 space-y-3 pb-4"></div>
+                </div>
+
+                <!-- ====== 4. Report Screen ====== -->
+                <div id="screen-report" class="screen-panel bg-background">
+                    <div class="px-5 pt-4 pb-3 flex justify-between items-center">
+                        <h1 class="font-serif font-bold text-xl text-foreground">学习报告</h1>
+                        <button class="bg-primary text-primary-fg px-3.5 py-2 rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.15)]" onclick="generateNewReport()">
+                            <i class="fas fa-sync-alt mr-1.5"></i>生成报告
+                        </button>
+                    </div>
+
+                    <!-- Period Toggle -->
+                    <div class="px-5 pb-3 flex gap-2">
+                        <button class="px-4 py-2 bg-primary text-primary-fg rounded-full text-sm font-bold transition-all duration-300" id="period-weekly" onclick="setReportPeriod('weekly')">周报</button>
+                        <button class="px-4 py-2 bg-muted text-muted-fg rounded-full text-sm font-medium hover:bg-muted/70 transition-all duration-300" id="period-monthly" onclick="setReportPeriod('monthly')">月报</button>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="px-5 pb-3 grid grid-cols-2 gap-2.5">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <p class="text-xs text-muted-fg mb-0.5">总做题数</p>
+                            <p class="font-sans text-xl font-bold text-foreground" id="rp-totalQuestions">342</p>
+                        </div>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <p class="text-xs text-muted-fg mb-0.5">正确率</p>
+                            <p class="font-sans text-xl font-bold text-primary" id="rp-correctRate">87.3%</p>
+                        </div>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <p class="text-xs text-muted-fg mb-0.5">学习时长</p>
+                            <p class="font-sans text-xl font-bold text-secondary" id="rp-studyHours">8.5h</p>
+                        </div>
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <p class="text-xs text-muted-fg mb-0.5">连续天数</p>
+                            <p class="font-sans text-xl font-bold text-foreground" id="rp-streak">7天</p>
+                        </div>
+                    </div>
+
+                    <!-- Subject Distribution Bar Chart -->
+                    <div class="px-5 pb-3">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <h2 class="font-serif font-bold text-sm text-foreground mb-3">学科分布</h2>
+                            <div class="space-y-2" id="subject-chart"></div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Trend -->
+                    <div class="px-5 pb-4">
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                            <h2 class="font-serif font-bold text-sm text-foreground mb-3" id="trend-title">每日正确率趋势</h2>
+                            <div class="flex items-end gap-1.5 h-28" id="trend-chart"></div>
+                            <div class="flex justify-between text-xs text-muted-fg mt-2" id="trend-labels"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bottom Navigation -->
-                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
+                <!-- ====== 5. Profile Screen ====== -->
+                <div id="screen-profile" class="screen-panel bg-background">
+                    <div class="px-5 pt-4 pb-4">
+                        <h1 class="font-serif font-bold text-xl text-foreground mb-4">我的</h1>
+
+                        <!-- User Card -->
+                        <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)] flex items-center gap-4 mb-4">
+                            <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-serif text-xl font-bold">张</span>
+                            </div>
+                            <div class="flex-1">
+                                <h2 class="font-serif font-bold text-foreground" id="profile-name">张小明</h2>
+                                <p class="text-xs text-muted-fg mt-0.5">高一 · 数学方向</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-border"></i>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="flex justify-around mb-4">
+                            <div class="text-center">
+                                <p class="font-sans text-lg font-bold text-foreground">10</p>
+                                <p class="text-xs text-muted-fg">错题</p>
+                            </div>
+                            <div class="w-px bg-border/50"></div>
+                            <div class="text-center">
+                                <p class="font-sans text-lg font-bold text-primary">87.3%</p>
+                                <p class="text-xs text-muted-fg">正确率</p>
+                            </div>
+                            <div class="w-px bg-border/50"></div>
+                            <div class="text-center">
+                                <p class="font-sans text-lg font-bold text-secondary">7天</p>
+                                <p class="text-xs text-muted-fg">连续打卡</p>
+                            </div>
+                        </div>
+
+                        <!-- Settings -->
+                        <div class="bg-[#FEFEFA] rounded-[2rem] border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] overflow-hidden">
+                            <button class="w-full flex items-center justify-between px-4 py-3.5 hover:bg-muted/50 transition-colors border-b border-border/20" onclick="showToast('个人信息设置（演示版）')">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-2xl flex items-center justify-center"><i class="fas fa-user-edit text-primary text-sm"></i></div>
+                                    <span class="text-sm text-foreground font-medium">个人信息</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-border text-xs"></i>
+                            </button>
+                            <button class="w-full flex items-center justify-between px-4 py-3.5 hover:bg-muted/50 transition-colors border-b border-border/20" onclick="showToast('学习设置（演示版）')">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-secondary/10 rounded-2xl flex items-center justify-center"><i class="fas fa-cog text-secondary text-sm"></i></div>
+                                    <span class="text-sm text-foreground font-medium">学习设置</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-border text-xs"></i>
+                            </button>
+                            <button class="w-full flex items-center justify-between px-4 py-3.5 hover:bg-muted/50 transition-colors border-b border-border/20" onclick="showToast('通知设置（演示版）')">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-accent rounded-2xl flex items-center justify-center"><i class="fas fa-bell text-accent-fg text-sm"></i></div>
+                                    <span class="text-sm text-foreground font-medium">通知设置</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-border text-xs"></i>
+                            </button>
+                            <button class="w-full flex items-center justify-between px-4 py-3.5 hover:bg-muted/50 transition-colors" onclick="showToast('关于意学助手 v1.0.0 演示版')">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-destructive/10 rounded-2xl flex items-center justify-center"><i class="fas fa-info-circle text-destructive text-sm"></i></div>
+                                    <span class="text-sm text-foreground font-medium">关于</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-border text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- About -->
+                        <div class="mt-4 text-center">
+                            <p class="text-xs text-muted-fg">意学助手 v1.0.0 · 静态演示版</p>
+                            <p class="text-xs text-border mt-0.5">AI 智能教育平台</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Tab Bar -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-border/30 px-4 py-2.5 z-20" id="tab-bar">
                     <div class="flex justify-between">
-                        <button class="text-gray-400">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
+                        <button class="tab-btn text-primary flex flex-col items-center gap-0.5 transition-all duration-300 min-w-0" data-screen="home">
+                            <i class="fas fa-home text-lg"></i>
+                            <span class="text-[10px] font-medium">首页</span>
                         </button>
-                        <button class="text-indigo-600">
-                            <i class="fas fa-book-open text-xl"></i>
-                            <p class="text-xs mt-1">错题</p>
+                        <button class="tab-btn text-muted-fg flex flex-col items-center gap-0.5 transition-all duration-300 min-w-0" data-screen="mistakes">
+                            <i class="fas fa-book-open text-lg"></i>
+                            <span class="text-[10px] font-medium">错题</span>
                         </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-graduation-cap text-xl"></i>
-                            <p class="text-xs mt-1">学习</p>
+                        <button class="tab-btn text-muted-fg flex flex-col items-center gap-0.5 transition-all duration-300 min-w-0" data-screen="study">
+                            <i class="fas fa-graduation-cap text-lg"></i>
+                            <span class="text-[10px] font-medium">学习</span>
                         </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-chart-line text-xl"></i>
-                            <p class="text-xs mt-1">报告</p>
+                        <button class="tab-btn text-muted-fg flex flex-col items-center gap-0.5 transition-all duration-300 min-w-0" data-screen="report">
+                            <i class="fas fa-chart-line text-lg"></i>
+                            <span class="text-[10px] font-medium">报告</span>
                         </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phone 3: 学习页面 -->
-        <div class="phone-frame bg-gray-50">
-            <div class="screen-content pb-20">
-                <!-- Status Bar -->
-                <div class="bg-white px-6 py-2 flex justify-between items-center">
-                    <span class="text-xs">9:41</span>
-                    <div class="flex gap-1">
-                        <i class="fas fa-signal text-xs"></i>
-                        <i class="fas fa-wifi text-xs"></i>
-                        <i class="fas fa-battery-full text-xs"></i>
-                    </div>
-                </div>
-
-                <!-- Header -->
-                <div class="bg-white px-5 pt-4 pb-3">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-xl font-bold">学习中心</h1>
-                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-full text-sm">
-                            <i class="fas fa-brain mr-2"></i>AI助手
+                        <button class="tab-btn text-muted-fg flex flex-col items-center gap-0.5 transition-all duration-300 min-w-0" data-screen="profile">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="text-[10px] font-medium">我的</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Progress Card -->
-                <div class="px-5 py-4">
-                    <div class="bg-white rounded-xl p-4 card-shadow">
-                        <div class="flex justify-between items-center mb-3">
-                            <h2 class="font-semibold">今日学习进度</h2>
-                            <button class="text-indigo-600"><i class="fas fa-sync-alt"></i></button>
-                        </div>
-                        <div class="flex justify-around mb-3">
-                            <div class="text-center">
-                                <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-1">
-                                    <i class="fas fa-clock text-blue-600"></i>
-                                </div>
-                                <p class="text-lg font-bold">60分钟</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-1">
-                                    <i class="fas fa-exclamation-triangle text-red-500"></i>
-                                </div>
-                                <p class="text-lg font-bold">8题</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-1">
-                                    <i class="fas fa-fire text-green-500"></i>
-                                </div>
-                                <p class="text-lg font-bold">7天</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div><!-- /screen-content -->
+        </div><!-- /phone-frame -->
+    </div><!-- /container -->
 
-                <!-- Today's Goals -->
-                <div class="px-5 py-2">
-                    <h2 class="font-semibold mb-3">今日学习计划</h2>
-                    <div class="space-y-2">
-                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
-                            <i class="far fa-circle text-gray-300 text-xl mr-3"></i>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium">完成5道数学题</p>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-300"></i>
-                        </div>
-                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
-                            <i class="far fa-circle text-gray-300 text-xl mr-3"></i>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium">复习2个物理错题</p>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-300"></i>
-                        </div>
-                        <div class="bg-white rounded-xl p-4 card-shadow flex items-center">
-                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-400 line-through">完成化学练习</p>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI Recommendations -->
-                <div class="px-5 py-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="font-semibold">AI学习推荐</h2>
-                        <button class="text-indigo-600 text-sm">生成新推荐</button>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center mr-3">
-                                    <i class="fas fa-quiz text-white text-sm"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium mb-1">建议复习方程错题</p>
-                                    <span class="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">优先级 8</span>
-                                </div>
-                                <i class="fas fa-chevron-right text-gray-300"></i>
-                            </div>
-                        </div>
-                        <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-100">
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
-                                    <i class="fas fa-school text-white text-sm"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium mb-1">学习代数基础知识</p>
-                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">优先级 7</span>
-                                </div>
-                                <i class="fas fa-chevron-right text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Navigation -->
-                <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4">
-                    <div class="flex justify-between">
-                        <button class="text-gray-400">
-                            <i class="fas fa-home text-xl"></i>
-                            <p class="text-xs mt-1">首页</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-book-open text-xl"></i>
-                            <p class="text-xs mt-1">错题</p>
-                        </button>
-                        <button class="text-indigo-600">
-                            <i class="fas fa-graduation-cap text-xl"></i>
-                            <p class="text-xs mt-1">学习</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-chart-line text-xl"></i>
-                            <p class="text-xs mt-1">报告</p>
-                        </button>
-                        <button class="text-gray-400">
-                            <i class="fas fa-user text-xl"></i>
-                            <p class="text-xs mt-1">我的</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-2xl p-6 w-80 transform transition-all" id="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-lg font-bold"></h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg transform -translate-y-20 transition-transform z-50">
-        <span id="toast-message"></span>
+    <!-- Toast -->
+    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 bg-foreground text-white px-5 py-2.5 rounded-full shadow-[0_4px_20px_-2px_rgba(44,44,36,0.3)] transform -translate-y-24 transition-transform duration-300 z-[200]">
+        <span id="toast-message" class="font-sans text-xs"></span>
     </div>
 
     <script>
-        // State management
-        let activePhone = 0;
-        let activeScreen = 'home';
-        let goals = [
-            { id: 1, text: '完成5道数学题', completed: false },
-            { id: 2, text: '复习2个物理错题', completed: false },
-            { id: 3, text: '完成化学练习', completed: true }
-        ];
-        let filterTab = 'all';
+    // ====== Mock Data ======
+    const MOCK_USER = { id: 'u1', name: '张小明', grade: 'GRADE_10', subject: '数学方向', email: 'zhangxm@example.com' };
 
-        // Navigation click handlers
-        function setupNavigation() {
-            document.querySelectorAll('.phone-frame').forEach((phone, phoneIndex) => {
-                phone.querySelectorAll('.screen-content button').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        this.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            this.style.transform = 'scale(1)';
-                        }, 100);
-                    });
-                });
+    const MOCK_MISTAKES = [
+        { id: 'm1', subject: 'MATH', difficulty: 'MEDIUM', questionText: '求解方程 2x + 3 = 7', correctAnswer: 'x = 2', yourAnswer: 'x = 3', analysis: '错误原因：移项时符号错误。正确解法：2x + 3 = 7 → 2x = 7 - 3 → 2x = 4 → x = 2。注意常数项移到等号右边时要减去，而非直接移过去不变号。', knowledgePoints: ['一元一次方程', '移项法则', '等式性质'], isSolved: true, createdAt: '2026-05-01', reviewCount: 3 },
+        { id: 'm2', subject: 'PHYSICS', difficulty: 'HARD', questionText: '一个质量为2kg的物体从10m高处自由落下，求落地时的速度。（g=10m/s²）', correctAnswer: 'v = 10√2 ≈ 14.14 m/s', yourAnswer: 'v = 10 m/s', analysis: '错误原因：直接套用了 v=gt，忽略了高度关系。正确解法：由 v² = 2gh，代入 h=10m，g=10m/s²，得 v² = 2×10×10 = 200，v = 10√2 ≈ 14.14 m/s。', knowledgePoints: ['自由落体运动', '动能定理', '运动学公式'], isSolved: false, createdAt: '2026-05-02', reviewCount: 1 },
+        { id: 'm3', subject: 'CHEMISTRY', difficulty: 'EASY', questionText: '计算 NaCl 的摩尔质量（Na:23, Cl:35.5）', correctAnswer: '58.5 g/mol', yourAnswer: '58 g/mol', analysis: '计算精度不够，摩尔质量应精确到小数点后一位。正确计算：23 + 35.5 = 58.5 g/mol。', knowledgePoints: ['摩尔质量', '化学计量', '元素周期表'], isSolved: true, createdAt: '2026-05-03', reviewCount: 2 },
+        { id: 'm4', subject: 'MATH', difficulty: 'HARD', questionText: '求函数 f(x) = x² - 4x + 3 的最小值', correctAnswer: '最小值为 -1（当 x=2 时）', yourAnswer: '最小值为 0', analysis: '二次函数求最值需用配方法：f(x) = x² - 4x + 3 = (x-2)² - 1，所以当 x=2 时取得最小值 -1。', knowledgePoints: ['二次函数', '配方法', '函数极值'], isSolved: false, createdAt: '2026-04-28', reviewCount: 2 },
+        { id: 'm5', subject: 'ENGLISH', difficulty: 'MEDIUM', questionText: 'Choose: If I ___ you, I would study harder. (A) am (B) was (C) were (D) be', correctAnswer: 'C. were', yourAnswer: 'B. was', analysis: '虚拟语气中，与现在事实相反时，be动词一律用 were，无论主语是第几人称。', knowledgePoints: ['虚拟语气', '条件句', 'be动词特殊用法'], isSolved: true, createdAt: '2026-05-04', reviewCount: 1 },
+        { id: 'm6', subject: 'PHYSICS', difficulty: 'MEDIUM', questionText: '一个电路中，电阻R=10Ω，电压U=220V，求电流I。', correctAnswer: 'I = 22A', yourAnswer: 'I = 2200A', analysis: '欧姆定律 I=U/R，但计算时把乘法搞反了。正确：I = 220/10 = 22A。', knowledgePoints: ['欧姆定律', '电路基础', '物理量单位'], isSolved: true, createdAt: '2026-04-25', reviewCount: 3 },
+        { id: 'm7', subject: 'CHINESE', difficulty: 'MEDIUM', questionText: '下列成语使用正确的是？（A）他做事总是"首当其冲"（B）这篇文章写得"不刊之论"（C）春天的景色"美轮美奂"（D）老师"侃侃而谈"地讲课', correctAnswer: 'D', yourAnswer: 'A', analysis: '"首当其冲"比喻最先受到攻击或遭遇灾难，不能理解为"冲在前面"。正确选项D中"侃侃而谈"形容理直气壮、从容不迫地说话，符合语境。', knowledgePoints: ['成语辨析', '词语褒贬义', '语境分析'], isSolved: false, createdAt: '2026-05-05', reviewCount: 1 },
+        { id: 'm8', subject: 'MATH', difficulty: 'EASY', questionText: '计算 sin30° + cos60° 的值', correctAnswer: '1', yourAnswer: '0.5', analysis: 'sin30° = 1/2，cos60° = 1/2，两者相加为 1。你可能只算了一个三角函数。', knowledgePoints: ['三角函数值', '特殊角', '角度制'], isSolved: true, createdAt: '2026-04-20', reviewCount: 4 },
+        { id: 'm9', subject: 'CHEMISTRY', difficulty: 'HARD', questionText: '配平化学方程式：Fe + O₂ → Fe₃O₄', correctAnswer: '3Fe + 2O₂ → Fe₃O₄', yourAnswer: '2Fe + O₂ → Fe₃O₄', analysis: '配平需保证原子守恒。产物 Fe₃O₄ 含3个Fe和4个O，反应物需3个Fe和2个O₂（4个O原子）。', knowledgePoints: ['化学方程式配平', '质量守恒', '氧化反应'], isSolved: false, createdAt: '2026-05-04', reviewCount: 1 },
+        { id: 'm10', subject: 'BIOLOGY', difficulty: 'EASY', questionText: '植物光合作用的主要场所是？（A）线粒体（B）叶绿体（C）细胞核（D）内质网', correctAnswer: 'B. 叶绿体', yourAnswer: 'A. 线粒体', analysis: '线粒体是呼吸作用的主要场所，叶绿体才是光合作用的场所。注意区分两者的功能。', knowledgePoints: ['光合作用', '细胞器功能', '植物生理'], isSolved: true, createdAt: '2026-04-18', reviewCount: 2 },
+    ];
 
-                // Bottom navigation
-                phone.querySelectorAll('.screen-content > div:last-of-type button').forEach((navBtn, navIndex) => {
-                    navBtn.addEventListener('click', () => {
-                        switchScreen(phoneIndex, navIndex);
-                    });
-                });
+    const MOCK_GOALS = [
+        { id: 'g1', text: '完成5道数学题', subject: 'MATH', target: 5, progress: 3, completed: false },
+        { id: 'g2', text: '复习2个物理错题', subject: 'PHYSICS', target: 2, progress: 0, completed: false },
+        { id: 'g3', text: '完成化学练习', subject: 'CHEMISTRY', target: 1, progress: 1, completed: true },
+        { id: 'g4', text: '背诵10个英语单词', subject: 'ENGLISH', target: 10, progress: 6, completed: false },
+    ];
 
-                // Camera button
-                const cameraBtn = phone.querySelector('button:has(.fa-camera)');
-                if (cameraBtn) {
-                    cameraBtn.addEventListener('click', () => showModal('camera'));
-                }
+    const MOCK_RECOMMENDATIONS = [
+        { id: 'r1', type: 'REVIEW', subject: 'MATH', priority: 9, reason: '方程知识点掌握薄弱，建议重点复习一元一次方程的移项方法', detail: '根据你的错题记录，在"求解方程 2x + 3 = 7"和"函数最小值"两道题中出现了相似的符号处理错误。建议从基础移项练习开始，逐步过渡到配方法求最值。推荐每天练习5道一元一次方程，坚持3天。' },
+        { id: 'r2', type: 'PRACTICE', subject: 'PHYSICS', priority: 8, reason: '力学基础需要加强，特别是运动学公式和动能定理', detail: '自由落体和欧姆定律两道题都有公式套用错误，说明对物理量之间的关系理解不够深入。建议：先回顾每个公式的推导过程，再做题。推荐从简单的匀变速直线运动开始练习。' },
+        { id: 'r3', type: 'KNOWLEDGE', subject: 'CHEMISTRY', priority: 7, reason: '化学计量基础扎实，可以进阶学习化学方程式配平', detail: '摩尔质量计算已经掌握，但配平题出错了。配平的关键是原子守恒，建议先掌握观察法配平，再学习氧化还原反应的化合价升降法。' },
+        { id: 'r4', type: 'REVIEW', subject: 'ENGLISH', priority: 6, reason: '语法薄弱，特别是虚拟语气的应用', detail: '虚拟语气是高中英语的重点和难点。你混淆了was和were在虚拟语气中的用法。建议先系统复习if条件句的三种基本类型（与现在/过去/将来事实相反），每种类型做5道练习题。' },
+    ];
 
-                // AI Assistant button
-                const aiBtn = phone.querySelector('button:has(.fa-brain)');
-                if (aiBtn) {
-                    aiBtn.addEventListener('click', () => showModal('ai'));
-                }
+    const SUBJECTS = { MATH: '数学', PHYSICS: '物理', CHEMISTRY: '化学', CHINESE: '语文', ENGLISH: '英语', BIOLOGY: '生物' };
+    const DIFFS = { EASY: '简单', MEDIUM: '中等', HARD: '困难' };
+    const DIFF_COLORS = { EASY: 'bg-primary/10 text-primary', MEDIUM: 'bg-secondary/10 text-secondary', HARD: 'bg-destructive/10 text-destructive' };
+    const SUBJ_ICONS = { MATH: 'fa-calculator', PHYSICS: 'fa-atom', CHEMISTRY: 'fa-flask', CHINESE: 'fa-language', ENGLISH: 'fa-globe', BIOLOGY: 'fa-leaf' };
+    const REC_TYPE_ICONS = { REVIEW: 'fa-redo-alt', PRACTICE: 'fa-pen-fancy', KNOWLEDGE: 'fa-lightbulb' };
+    const REC_TYPE_LABELS = { REVIEW: '复习', PRACTICE: '练习', KNOWLEDGE: '知识' };
+    const CARD_RADII = ['', 'rounded-tr-[3rem]', 'rounded-bl-[3rem]', 'rounded-tl-[3rem]', 'rounded-br-[3rem]'];
 
-                // Filter tabs
-                phone.querySelectorAll('.px-5.py-3 button').forEach((tab, tabIndex) => {
-                    tab.addEventListener('click', () => {
-                        setFilterTab(phoneIndex, tabIndex);
-                    });
-                });
+    // ====== Application State ======
+    const state = {
+        currentScreen: 'welcome',
+        previousScreen: null,
+        mistakeFilterSubject: 'all',
+        mistakeFilterStatus: 'all',
+        reportPeriod: 'weekly',
+        detailId: null,
+        mistakes: JSON.parse(JSON.stringify(MOCK_MISTAKES)),
+        goals: JSON.parse(JSON.stringify(MOCK_GOALS)),
+        recommendations: JSON.parse(JSON.stringify(MOCK_RECOMMENDATIONS)),
+    };
 
-                // Goal checkboxes
-                phone.querySelectorAll('.fa-circle, .fa-check-circle').forEach((icon) => {
-                    icon.addEventListener('click', (e) => {
-                        toggleGoal(e.target);
-                    });
-                });
+    // ====== Navigation ======
+    function navigate(screen, params) {
+        if (params && params.id !== undefined) state.detailId = params.id;
+        else if (screen === 'mistakes' || screen === 'study') state.detailId = null;
 
-                // Recommendation cards
-                phone.querySelectorAll('.bg-gradient-to-r').forEach((card) => {
-                    card.addEventListener('click', () => {
-                        showToast('正在打开学习内容...');
-                    });
-                });
-            });
-        }
+        state.previousScreen = state.currentScreen;
+        state.currentScreen = screen;
 
-        function switchScreen(phoneIndex, screenIndex) {
-            const screens = ['首页', '错题', '学习', '报告', '我的'];
-            showToast(`切换到${screens[screenIndex]}页面`);
-            updateNavStates(phoneIndex, screenIndex);
-        }
+        document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById('screen-' + screen);
+        if (target) { target.classList.add('active'); target.scrollTop = 0; }
 
-        function updateNavStates(phoneIndex, activeIndex) {
-            const phone = document.querySelectorAll('.phone-frame')[phoneIndex];
-            const navButtons = phone.querySelectorAll('.screen-content > div:last-of-type button');
-            navButtons.forEach((btn, i) => {
-                if (i === activeIndex) {
-                    btn.classList.remove('text-gray-400');
-                    btn.classList.add('text-indigo-600');
-                } else {
-                    btn.classList.remove('text-indigo-600');
-                    btn.classList.add('text-gray-400');
-                }
-            });
-        }
+        document.getElementById('main-screen').scrollTop = 0;
+        updateTabBar();
+        renderScreen(screen);
+    }
 
-        function showModal(type) {
-            const modal = document.getElementById('modal');
-            const title = document.getElementById('modal-title');
-            const body = document.getElementById('modal-body');
+    function updateTabBar() {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const mainScreens = ['home', 'mistakes', 'study', 'report', 'profile'];
+        let activeTab = state.currentScreen;
+        if (activeTab.includes('-')) activeTab = activeTab.split('-')[0]; // detail screens map to parent tab
 
-            modal.classList.remove('hidden');
-
-            if (type === 'camera') {
-                title.textContent = '拍照识别错题';
-                body.innerHTML = `
-                    <div class="text-center">
-                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-camera text-indigo-600 text-3xl"></i>
-                        </div>
-                        <p class="text-gray-600 mb-4">将题目放入框内，系统会自动识别</p>
-                        <button onclick="startCamera()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium">
-                            <i class="fas fa-camera mr-2"></i>打开相机
-                        </button>
-                        <button onclick="uploadImage()" class="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-medium mt-2">
-                            <i class="fas fa-image mr-2"></i>从相册选择
-                        </button>
-                    </div>
-                `;
-            } else if (type === 'ai') {
-                title.textContent = 'AI学习助手';
-                body.innerHTML = `
-                    <div class="space-y-3">
-                        <button onclick="askQuestion()" class="w-full bg-indigo-100 text-indigo-700 py-3 rounded-xl font-medium">
-                            <i class="fas fa-question-circle mr-2"></i>智能问答
-                        </button>
-                        <button onclick="getRecommendation()" class="w-full bg-green-100 text-green-700 py-3 rounded-xl font-medium">
-                            <i class="fas fa-lightbulb mr-2"></i>学习建议
-                        </button>
-                        <button onclick="voiceChat()" class="w-full bg-purple-100 text-purple-700 py-3 rounded-xl font-medium">
-                            <i class="fas fa-microphone mr-2"></i>语音对话
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
-            toast.style.transform = 'translate(-50%, 0)';
-            setTimeout(() => {
-                toast.style.transform = 'translate(-50%, -5rem)';
-            }, 2000);
-        }
-
-        function setFilterTab(phoneIndex, tabIndex) {
-            const phone = document.querySelectorAll('.phone-frame')[phoneIndex];
-            const tabs = phone.querySelectorAll('.px-5.py-3 button');
-            const labels = ['全部', '未解决', '已解决'];
-
-            tabs.forEach((tab, i) => {
-                if (i === tabIndex) {
-                    tab.classList.remove('bg-gray-100', 'text-gray-700');
-                    tab.classList.add('bg-indigo-600', 'text-white');
-                } else {
-                    tab.classList.remove('bg-indigo-600', 'text-white');
-                    tab.classList.add('bg-gray-100', 'text-gray-700');
-                }
-            });
-
-            filterTab = labels[tabIndex].toLowerCase();
-            showToast(`筛选: ${labels[tabIndex]}`);
-        }
-
-        function toggleGoal(icon) {
-            const parent = icon.closest('.bg-white.rounded-xl');
-            const textElement = parent.querySelector('p');
-            const isChecked = icon.classList.contains('fa-check-circle');
-
-            if (isChecked) {
-                icon.classList.remove('fa-check-circle', 'text-green-500');
-                icon.classList.add('fa-circle', 'text-gray-300');
-                textElement.classList.remove('text-gray-400', 'line-through');
-                showToast('已取消完成');
+        tabs.forEach(tab => {
+            const screen = tab.dataset.screen;
+            if (screen === activeTab) {
+                tab.classList.remove('text-muted-fg');
+                tab.classList.add('text-primary');
             } else {
-                icon.classList.remove('fa-circle', 'text-gray-300');
-                icon.classList.add('fa-check-circle', 'text-green-500');
-                textElement.classList.add('text-gray-400', 'line-through');
-                showToast('🎉 太棒了！完成一项学习目标');
-            }
-        }
-
-        // Modal actions
-        function startCamera() {
-            closeModal();
-            showToast('正在打开相机...');
-        }
-
-        function uploadImage() {
-            closeModal();
-            showToast('请选择图片');
-        }
-
-        function askQuestion() {
-            closeModal();
-            showToast('AI正在为您解答...');
-        }
-
-        function getRecommendation() {
-            closeModal();
-            showToast('正在生成个性化建议...');
-        }
-
-        function voiceChat() {
-            closeModal();
-            showToast('请开始说话...');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            setupNavigation();
-        });
-
-        // Close modal on backdrop click
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') {
-                closeModal();
+                tab.classList.remove('text-primary');
+                tab.classList.add('text-muted-fg');
             }
         });
+    }
+
+    // ====== Screen Rendering ======
+    function renderScreen(screen) {
+        switch(screen) {
+            case 'home': renderHome(); break;
+            case 'mistakes': renderMistakes(); break;
+            case 'mistake-detail': renderMistakeDetail(); break;
+            case 'study': renderStudy(); break;
+            case 'study-detail': renderStudyDetail(); break;
+            case 'report': renderReport(); break;
+            case 'profile': renderProfile(); break;
+        }
+    }
+
+    function dismissWelcome() {
+        document.getElementById('screen-welcome').classList.add('overlay-out');
+        setTimeout(() => {
+            document.getElementById('screen-welcome').classList.remove('active', 'overlay-out');
+            navigate('home');
+        }, 300);
+    }
+
+    function renderHome() {
+        const solved = state.mistakes.filter(m => m.isSolved).length;
+        const unsolved = state.mistakes.length - solved;
+        const correctRate = (solved / state.mistakes.length * 100).toFixed(1);
+        document.getElementById('home-username').textContent = '今天也要努力学习';
+    }
+
+    function renderMistakes() {
+        updateMistakeStats();
+        renderMistakeCards();
+        renderSubjectFilters();
+        renderStatusFilters();
+    }
+
+    function updateMistakeStats() {
+        const filtered = getFilteredMistakes();
+        const solved = filtered.filter(m => m.isSolved).length;
+        document.getElementById('ms-total').textContent = filtered.length;
+        document.getElementById('ms-solved').textContent = solved;
+        document.getElementById('ms-unsolved').textContent = filtered.length - solved;
+    }
+
+    function getFilteredMistakes() {
+        return state.mistakes.filter(m => {
+            if (state.mistakeFilterSubject !== 'all' && m.subject !== state.mistakeFilterSubject) return false;
+            if (state.mistakeFilterStatus === 'solved' && !m.isSolved) return false;
+            if (state.mistakeFilterStatus === 'unsolved' && m.isSolved) return false;
+            return true;
+        });
+    }
+
+    function renderMistakeCards() {
+        const filtered = getFilteredMistakes();
+        const container = document.getElementById('mistake-list');
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center py-8"><i class="fas fa-inbox text-border text-3xl mb-2"></i><p class="text-muted-fg text-sm">没有匹配的错题</p></div>';
+            return;
+        }
+        container.innerHTML = filtered.map((m, i) => `
+            <div class="bg-[#FEFEFA] rounded-[2rem] ${CARD_RADII[i % 5]} p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer" onclick="navigate('mistake-detail', {id: '${m.id}'})">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex gap-1.5">
+                        <span class="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-[10px] font-bold">${SUBJECTS[m.subject]}</span>
+                        <span class="px-2 py-0.5 ${DIFF_COLORS[m.difficulty]} rounded-full text-[10px] font-bold">${DIFFS[m.difficulty]}</span>
+                    </div>
+                    ${m.isSolved ? '<i class="fas fa-check-circle text-primary text-sm"></i>' : '<i class="far fa-circle text-border text-sm"></i>'}
+                </div>
+                <p class="text-foreground text-xs mb-2.5 line-clamp-2">${m.questionText}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-muted-fg">${new Date(m.createdAt).toLocaleDateString('zh-CN', {month:'short', day:'numeric'})}</span>
+                    <span class="text-primary text-[10px] font-bold"><i class="fas fa-eye mr-0.5"></i>查看详情</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderSubjectFilters() {
+        const container = document.getElementById('subject-filters');
+        container.querySelectorAll('button').forEach(btn => {
+            if (btn.dataset.subject === state.mistakeFilterSubject) {
+                btn.className = 'px-3 py-1.5 bg-primary text-primary-fg rounded-full text-xs font-bold transition-all duration-300';
+            } else {
+                btn.className = 'px-3 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300';
+            }
+        });
+    }
+
+    function renderStatusFilters() {
+        const container = document.getElementById('status-filters');
+        container.querySelectorAll('button').forEach(btn => {
+            if (btn.dataset.status === state.mistakeFilterStatus) {
+                btn.className = 'px-4 py-1.5 bg-primary text-primary-fg rounded-full text-xs font-bold transition-all duration-300';
+            } else {
+                btn.className = 'px-4 py-1.5 bg-muted text-muted-fg rounded-full text-xs font-medium hover:bg-muted/70 transition-all duration-300';
+            }
+        });
+    }
+
+    function renderMistakeDetail() {
+        const m = state.mistakes.find(x => x.id === state.detailId);
+        if (!m) return;
+        const container = document.getElementById('mistake-detail-content');
+        container.innerHTML = `
+            <div class="flex gap-2 flex-wrap">
+                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold">${SUBJECTS[m.subject]}</span>
+                <span class="px-3 py-1 ${DIFF_COLORS[m.difficulty]} rounded-full text-xs font-bold">${DIFFS[m.difficulty]}</span>
+                ${m.isSolved ? '<span class="px-3 py-1 bg-primary text-primary-fg rounded-full text-xs font-bold"><i class="fas fa-check mr-0.5"></i>已解决</span>' : '<span class="px-3 py-1 bg-destructive/10 text-destructive rounded-full text-xs font-bold">待解决</span>'}
+            </div>
+
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                <h3 class="font-serif font-bold text-sm text-foreground mb-2">题目</h3>
+                <p class="text-sm text-foreground leading-relaxed">${m.questionText}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div class="bg-destructive/5 rounded-[2rem] p-3 border border-destructive/20">
+                    <p class="text-xs text-destructive font-bold mb-1">你的答案</p>
+                    <p class="text-sm text-foreground">${m.yourAnswer}</p>
+                </div>
+                <div class="bg-primary/5 rounded-[2rem] p-3 border border-primary/20">
+                    <p class="text-xs text-primary font-bold mb-1">正确答案</p>
+                    <p class="text-sm text-foreground">${m.correctAnswer}</p>
+                </div>
+            </div>
+
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                <h3 class="font-serif font-bold text-sm text-foreground mb-2"><i class="fas fa-brain text-secondary mr-1.5"></i>AI 分析</h3>
+                <p class="text-xs text-muted-fg leading-relaxed">${m.analysis}</p>
+            </div>
+
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                <h3 class="font-serif font-bold text-sm text-foreground mb-2">相关知识点</h3>
+                <div class="flex gap-1.5 flex-wrap">
+                    ${m.knowledgePoints.map(kp => `<span class="px-3 py-1.5 bg-accent text-accent-fg rounded-full text-xs font-medium">${kp}</span>`).join('')}
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center text-xs text-muted-fg px-1">
+                <span>添加于 ${new Date(m.createdAt).toLocaleDateString('zh-CN')}</span>
+                <span>已复习 ${m.reviewCount} 次</span>
+            </div>
+
+            <button class="w-full py-3 ${m.isSolved ? 'bg-muted text-muted-fg' : 'bg-primary text-primary-fg'} rounded-full font-bold hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.15)]" onclick="toggleMistakeSolved('${m.id}')">
+                ${m.isSolved ? '<i class="fas fa-redo mr-1.5"></i>标记为待复习' : '<i class="fas fa-check mr-1.5"></i>标记为已解决'}
+            </button>
+        `;
+    }
+
+    function toggleMistakeSolved(id) {
+        const m = state.mistakes.find(x => x.id === id);
+        if (!m) return;
+        m.isSolved = !m.isSolved;
+        if (m.isSolved) { m.solvedAt = new Date().toISOString().split('T')[0]; m.reviewCount++; }
+        showToast(m.isSolved ? '已标记为已解决' : '已标记为待复习');
+        renderMistakeDetail();
+        updateMistakeStats();
+    }
+
+    function renderStudy() {
+        renderGoalsList();
+        renderRecsList();
+    }
+
+    function renderGoalsList() {
+        const container = document.getElementById('goals-list');
+        const completed = state.goals.filter(g => g.completed).length;
+        container.innerHTML = state.goals.map(g => `
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-3.5 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)] flex items-center gap-3 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer" onclick="toggleGoal('${g.id}')">
+                <div class="w-7 h-7 ${g.completed ? 'bg-primary' : 'border-2 border-border'} rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300">
+                    ${g.completed ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs ${g.completed ? 'text-muted-fg line-through' : 'text-foreground'} font-medium">${g.text}</p>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <div class="flex-1 h-1 bg-muted rounded-full max-w-[120px]">
+                            <div class="h-full ${g.completed ? 'bg-primary' : 'bg-secondary'} rounded-full transition-all duration-300" style="width:${g.completed ? 100 : Math.round(g.progress/g.target*100)}%"></div>
+                        </div>
+                        <span class="text-[10px] text-muted-fg">${g.completed ? '完成' : g.progress + '/' + g.target}</span>
+                    </div>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 bg-accent text-accent-fg rounded-full font-medium">${SUBJECTS[g.subject] || g.subject}</span>
+            </div>
+        `).join('');
+    }
+
+    function toggleGoal(id) {
+        const g = state.goals.find(x => x.id === id);
+        if (!g) return;
+        g.completed = !g.completed;
+        if (g.completed) g.progress = g.target;
+        renderGoalsList();
+        showToast(g.completed ? '太棒了！完成一项学习目标 🎉' : '已取消完成，继续加油');
+    }
+
+    function renderRecsList() {
+        const container = document.getElementById('recs-list');
+        const iconBgColors = ['bg-primary', 'bg-secondary', 'bg-destructive', 'bg-accent-fg'];
+        const bgColors = ['bg-primary/5 border-primary/10', 'bg-secondary/5 border-secondary/10', 'bg-destructive/5 border-destructive/10', 'bg-accent/5 border-accent/10'];
+        container.innerHTML = state.recommendations.map((r, i) => `
+            <div class="${bgColors[i % 4]} rounded-[2rem] p-3.5 border hover:-translate-y-0.5 transition-all duration-300 cursor-pointer" onclick="navigate('study-detail', {id: '${r.id}'})">
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 ${iconBgColors[i % 4]} rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${REC_TYPE_ICONS[r.type]} text-white text-xs"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5 mb-1">
+                            <span class="text-xs font-bold ${i % 2 === 0 ? 'text-primary' : 'text-secondary'}">[${REC_TYPE_LABELS[r.type]}]</span>
+                            <span class="text-[10px] text-muted-fg">${SUBJECTS[r.subject]}</span>
+                        </div>
+                        <p class="text-xs text-foreground font-medium leading-relaxed">${r.reason}</p>
+                    </div>
+                    <div class="flex flex-col items-end flex-shrink-0 gap-1">
+                        <span class="text-[10px] px-2 py-0.5 bg-foreground/80 text-white rounded-full font-bold">P${r.priority}</span>
+                        <i class="fas fa-chevron-right text-border text-xs"></i>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderStudyDetail() {
+        const r = state.recommendations.find(x => x.id === state.detailId);
+        if (!r) return;
+        const container = document.getElementById('study-detail-content');
+        container.innerHTML = `
+            <div class="flex gap-2 items-center">
+                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold">${REC_TYPE_LABELS[r.type]}</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-bold">${SUBJECTS[r.subject]}</span>
+                <span class="px-3 py-1 bg-foreground/80 text-white rounded-full text-xs font-bold">优先级 ${r.priority}</span>
+            </div>
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                <h3 class="font-serif font-bold text-sm text-foreground mb-2">推荐理由</h3>
+                <p class="text-sm text-foreground leading-relaxed">${r.reason}</p>
+            </div>
+            <div class="bg-[#FEFEFA] rounded-[2rem] p-4 border border-border/50 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.06)]">
+                <h3 class="font-serif font-bold text-sm text-foreground mb-2"><i class="fas fa-lightbulb text-secondary mr-1.5"></i>学习建议</h3>
+                <p class="text-xs text-muted-fg leading-relaxed">${r.detail}</p>
+            </div>
+            <button class="w-full py-3 bg-primary text-primary-fg rounded-full font-bold hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_4px_16px_-2px_rgba(93,112,82,0.15)]" onclick="showToast('开始学习《${r.reason.slice(0, 15)}...》（演示版）')">
+                <i class="fas fa-play mr-1.5"></i>开始学习
+            </button>
+        `;
+    }
+
+    function renderReport() {
+        const solved = state.mistakes.filter(m => m.isSolved).length;
+        const correctRate = (solved / state.mistakes.length * 100).toFixed(1);
+        document.getElementById('rp-totalQuestions').textContent = state.mistakes.length * 20 + 142;
+        document.getElementById('rp-correctRate').textContent = correctRate + '%';
+        document.getElementById('rp-studyHours').textContent = (Math.random() * 5 + 6).toFixed(1) + 'h';
+        document.getElementById('rp-streak').textContent = Math.floor(Math.random() * 5 + 4) + '天';
+
+        // Subject chart
+        const subjects = {};
+        state.mistakes.forEach(m => { subjects[m.subject] = (subjects[m.subject] || 0) + 1; });
+        const total = state.mistakes.length;
+        const barColors = ['bg-primary', 'bg-secondary', 'bg-destructive', 'bg-accent-fg', 'bg-[#5B8C5A]', 'bg-[#B8865E]'];
+        const subjectChart = document.getElementById('subject-chart');
+        subjectChart.innerHTML = Object.entries(subjects).map(([subj, count], i) => `
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-muted-fg w-10 flex-shrink-0">${SUBJECTS[subj]}</span>
+                <div class="flex-1 h-4 bg-muted rounded-full overflow-hidden">
+                    <div class="h-full ${barColors[i]} rounded-full bar-fill" style="width: ${count/total*100}%"></div>
+                </div>
+                <span class="text-xs text-muted-fg w-6 text-right">${count}</span>
+            </div>
+        `).join('');
+
+        // Trend chart
+        const isWeekly = state.reportPeriod === 'weekly';
+        const labels = isWeekly ? ['一', '二', '三', '四', '五', '六', '日'] : ['第1周', '第2周', '第3周', '第4周'];
+        const values = isWeekly ? [72, 78, 65, 85, 82, 90, 87] : [75, 82, 88, 85];
+        const maxVal = Math.max(...values);
+        document.getElementById('trend-title').textContent = isWeekly ? '每日正确率趋势' : '每周正确率趋势';
+        document.getElementById('trend-chart').innerHTML = values.map((v, i) => `
+            <div class="flex-1 flex flex-col items-center gap-1">
+                <span class="text-[10px] text-muted-fg">${v}%</span>
+                <div class="w-full bg-primary/80 rounded-t-lg bar-fill" style="height: ${v/maxVal*90}%"></div>
+            </div>
+        `).join('');
+        document.getElementById('trend-labels').innerHTML = labels.map(l => `<span>${l}</span>`).join('');
+    }
+
+    function setReportPeriod(period) {
+        state.reportPeriod = period;
+        document.getElementById('period-weekly').className = period === 'weekly' ? 'px-4 py-2 bg-primary text-primary-fg rounded-full text-sm font-bold transition-all duration-300' : 'px-4 py-2 bg-muted text-muted-fg rounded-full text-sm font-medium hover:bg-muted/70 transition-all duration-300';
+        document.getElementById('period-monthly').className = period === 'monthly' ? 'px-4 py-2 bg-primary text-primary-fg rounded-full text-sm font-bold transition-all duration-300' : 'px-4 py-2 bg-muted text-muted-fg rounded-full text-sm font-medium hover:bg-muted/70 transition-all duration-300';
+        renderReport();
+    }
+
+    function generateNewReport() {
+        // Randomize some stats for demo effect
+        const shuffled = [...state.mistakes].sort(() => Math.random() - 0.5);
+        for (let i = 0; i < shuffled.length; i++) {
+            shuffled[i].isSolved = Math.random() > 0.4;
+            shuffled[i].difficulty = ['EASY', 'MEDIUM', 'HARD'][Math.floor(Math.random() * 3)];
+        }
+        state.mistakes = shuffled;
+        renderReport();
+        showToast('报告已更新！');
+    }
+
+    function renderProfile() {
+        const solved = state.mistakes.filter(m => m.isSolved).length;
+        const correctRate = (solved / state.mistakes.length * 100).toFixed(1);
+        document.getElementById('profile-name').textContent = MOCK_USER.name;
+    }
+
+    // ====== Toast ======
+    let toastTimer;
+    function showToast(message) {
+        clearTimeout(toastTimer);
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = message;
+        toast.style.transform = 'translate(-50%, 0)';
+        toastTimer = setTimeout(() => { toast.style.transform = 'translate(-50%, -6rem)'; }, 2200);
+    }
+
+    // ====== Event Delegation ======
+    document.addEventListener('DOMContentLoaded', () => {
+        // Tab bar clicks
+        document.getElementById('tab-bar').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const screen = btn.dataset.screen;
+            if (screen && screen !== state.currentScreen.split('-')[0]) {
+                navigate(screen);
+            }
+        });
+
+        // Subject filter clicks
+        document.getElementById('subject-filters').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn || !btn.dataset.subject) return;
+            state.mistakeFilterSubject = btn.dataset.subject;
+            renderMistakes();
+        });
+
+        // Status filter clicks
+        document.getElementById('status-filters').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn || !btn.dataset.status) return;
+            state.mistakeFilterStatus = btn.dataset.status;
+            renderMistakes();
+        });
+    });
     </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -7,12 +7,14 @@ async function main() {
   console.log('🌱 开始种子数据填充...');
 
   // 清除现有数据
-  await prisma.mistake.deleteMany();
   await prisma.questionAttempt.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.mistake.deleteMany();
   await prisma.question.deleteMany();
-  await prisma.knowledgePoint.deleteMany();
   await prisma.recommendation.deleteMany();
   await prisma.report.deleteMany();
+  await prisma.knowledgePoint.deleteMany();
+  await prisma.statistics.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('✅ 清除现有数据完成');
@@ -36,7 +38,8 @@ async function main() {
         password: hashedPassword,
         grade: 'GRADE_11',
         subject: 'PHYSICS',
-      }),
+      },
+    }),
   ]);
 
   console.log('✅ 创建测试用户完成');
@@ -45,6 +48,7 @@ async function main() {
   const knowledgePoints = await Promise.all([
     prisma.knowledgePoint.create({
       data: {
+        userId: testUsers[0].id,
         name: '一元二次方程',
         subject: 'MATH',
         grade: 'GRADE_10',
@@ -55,6 +59,7 @@ async function main() {
     }),
     prisma.knowledgePoint.create({
       data: {
+        userId: testUsers[0].id,
         name: '牛顿运动定律',
         subject: 'PHYSICS',
         grade: 'GRADE_10',
@@ -65,6 +70,7 @@ async function main() {
     }),
     prisma.knowledgePoint.create({
       data: {
+        userId: testUsers[0].id,
         name: '函数的概念',
         subject: 'MATH',
         grade: 'GRADE_10',
@@ -87,10 +93,11 @@ async function main() {
         difficulty: 'EASY',
         questionType: '计算题',
         content: '求解方程 x² - 5x + 6 = 0',
-        options: ['x=2, x=3', 'x=-2, x=-3', 'x=1, x=6', 'x=-1, x=-6'],
+        options: JSON.stringify(['x=2, x=3', 'x=-2, x=-3', 'x=1, x=6', 'x=-1, x=-6']),
         correctAnswer: 'x=2, x=3',
         analysis: '使用因式分解法：x² - 5x + 6 = (x-2)(x-3) = 0，所以x=2或x=3',
-        knowledgePoints: ['一元二次方程', '因式分解'],
+        knowledgePoints: JSON.stringify(['一元二次方程', '因式分解']),
+        tags: JSON.stringify(['代数', '方程']),
       },
     }),
     prisma.question.create({
@@ -101,10 +108,11 @@ async function main() {
         difficulty: 'MEDIUM',
         questionType: '计算题',
         content: '一个质量为2kg的物体在水平面上受到10N的推力，加速度是多少？',
-        options: ['2 m/s²', '5 m/s²', '10 m/s²', '20 m/s²'],
+        options: JSON.stringify(['2 m/s²', '5 m/s²', '10 m/s²', '20 m/s²']),
         correctAnswer: '5 m/s²',
         analysis: '根据牛顿第二定律 F=ma，a=F/m=10/2=5 m/s²',
-        knowledgePoints: ['牛顿第二定律', '加速度'],
+        knowledgePoints: JSON.stringify(['牛顿第二定律', '加速度']),
+        tags: JSON.stringify(['力学', '计算']),
       },
     }),
     prisma.question.create({
@@ -115,10 +123,11 @@ async function main() {
         difficulty: 'MEDIUM',
         questionType: '应用题',
         content: '已知函数 f(x) = 2x + 3，求 f(5) 的值',
-        options: ['10', '12', '13', '15'],
+        options: JSON.stringify(['10', '12', '13', '15']),
         correctAnswer: '13',
         analysis: 'f(5) = 2×5 + 3 = 10 + 3 = 13',
-        knowledgePoints: ['函数的概念', '函数求值'],
+        knowledgePoints: JSON.stringify(['函数的概念', '函数求值']),
+        tags: JSON.stringify(['函数', '基础']),
       },
     }),
     prisma.question.create({
@@ -129,10 +138,11 @@ async function main() {
         difficulty: 'HARD',
         questionType: '证明题',
         content: '证明：对于任意实数a和b，有 a² + b² ≥ 2ab',
-        options: ['正确', '错误', '无法判断', '部分正确'],
+        options: JSON.stringify(['正确', '错误', '无法判断', '部分正确']),
         correctAnswer: '正确',
         analysis: '因为 (a-b)² ≥ 0，展开得 a² - 2ab + b² ≥ 0，即 a² + b² ≥ 2ab',
-        knowledgePoints: ['不等式', '完全平方'],
+        knowledgePoints: JSON.stringify(['不等式', '完全平方']),
+        tags: JSON.stringify(['证明', '不等式']),
       },
     }),
     prisma.question.create({
@@ -143,10 +153,11 @@ async function main() {
         difficulty: 'EASY',
         questionType: '选择题',
         content: '力的国际单位是',
-        options: ['牛顿', '焦耳', '瓦特', '帕斯卡'],
+        options: JSON.stringify(['牛顿', '焦耳', '瓦特', '帕斯卡']),
         correctAnswer: '牛顿',
         analysis: '力的国际单位是牛顿，简称牛，符号为N',
-        knowledgePoints: ['力的单位', '力学基础'],
+        knowledgePoints: JSON.stringify(['力的单位', '力学基础']),
+        tags: JSON.stringify(['基础', '单位']),
       },
     }),
   ]);
@@ -154,7 +165,7 @@ async function main() {
   console.log('✅ 创建题库完成');
 
   // 创建错题
-  const mistakes = await Promise.all([
+  await Promise.all([
     prisma.mistake.create({
       data: {
         userId: testUsers[0].id,
@@ -165,7 +176,7 @@ async function main() {
         questionType: '计算题',
         questionText: '求解方程 x² - 7x + 12 = 0',
         questionImage: '',
-        answer: 'x=3, x=4',
+        answer: 'x=4, x=3',
         correctAnswer: 'x=3, x=4',
         analysis: '使用因式分解法：x² - 7x + 12 = (x-3)(x-4) = 0，所以x=3或x=4',
         knowledgePoints: JSON.stringify(['一元二次方程']),
@@ -184,14 +195,13 @@ async function main() {
         questionType: '计算题',
         questionText: '一个质量为5kg的物体在水平面上受到20N的推力，加速度是多少？',
         questionImage: '',
-        answer: '4 m/s²',
+        answer: '5 m/s²',
         correctAnswer: '4 m/s²',
         analysis: '根据牛顿第二定律 F=ma，a=F/m=20/5=4 m/s²',
         knowledgePoints: JSON.stringify(['牛顿第二定律', '加速度']),
         mistakeType: JSON.stringify(['concept_error']),
-        isSolved: true,
-        reviewCount: 3,
-        mastery: 80,
+        isSolved: false,
+        reviewCount: 1,
       },
     }),
   ]);
@@ -199,11 +209,11 @@ async function main() {
   console.log('✅ 创建错题完成');
 
   // 创建学习推荐
-  const recommendations = await Promise.all([
+  await Promise.all([
     prisma.recommendation.create({
       data: {
         userId: testUsers[0].id,
-        type: 'question',
+        type: 'QUESTION',
         targetId: questions[1].id,
         priority: 8,
         reason: '建议练习更多物理力学题目',
@@ -213,7 +223,7 @@ async function main() {
     prisma.recommendation.create({
       data: {
         userId: testUsers[0].id,
-        type: 'knowledge',
+        type: 'KNOWLEDGE',
         targetId: knowledgePoints[1].id,
         priority: 9,
         reason: '牛顿运动定律掌握度较低，需要加强',
@@ -228,24 +238,22 @@ async function main() {
   await prisma.report.create({
     data: {
       userId: testUsers[0].id,
-      reportType: 'weekly',
-      startDate: new Date('2026-04-08'),
-      endDate: new Date('2026-04-14'),
-      data: JSON.stringify({
-        studyTime: 12.5,
-        questionsAttempted: 45,
-        correctRate: 78.5,
-        mistakesSolved: 12,
-        subjectBreakdown: {
-          MATH: { attempted: 25, correct: 20, rate: 80 },
-          PHYSICS: { attempted: 20, correct: 15, rate: 75 },
-        },
+      reportType: 'WEEKLY',
+      period: JSON.stringify({ start: '2026-04-08', end: '2026-04-14' }),
+      totalMistakes: 15,
+      solvedMistakes: 12,
+      correctRate: 78.5,
+      knowledgePoints: JSON.stringify({
+        MATH: { mastery: 75 },
+        PHYSICS: { mastery: 60 },
       }),
+      studyTime: 750,
+      averageDailyStudyTime: 2.5,
+      streakDays: 7,
     },
   });
 
   console.log('✅ 创建学习报告完成');
-
   console.log('🎉 种子数据填充完成！');
   console.log('');
   console.log('测试账号信息：');

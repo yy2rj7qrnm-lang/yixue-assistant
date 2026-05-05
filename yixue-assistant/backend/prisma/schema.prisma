@@ -1,230 +1,185 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// 用户模型
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
-  phone       String?  @unique
+  phone       String?
   name        String
+  password    String
   avatar      String?
-  grade       Grade?
-  subject     Subject?
+  grade       String?
+  subject     String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lastLoginAt DateTime?
 
-  // 关联关系
-  mistakes    Mistake[]
-  reports     Report[]
-  recommendations Recommendation[]
-  statistics  Statistics[]
+  mistakes         Mistake[]
+  reports          Report[]
+  recommendations  Recommendation[]
+  statistics       Statistics[]
   questionAttempts QuestionAttempt[]
+  knowledgePoints  KnowledgePoint[]
+  reviews          Review[]
 
   @@map("users")
 }
 
-// 错题模型
 model Mistake {
-  id             String     @id @default(cuid())
-  userId         String
-  subject        Subject
-  grade          Grade
-  chapter        String
-  difficulty     Difficulty
-  questionType   QuestionType
-  questionImage  String
-  questionText   String?
-  answer         String
-  correctAnswer  String
-  analysis       String?
-  knowledgePoints String   // JSON数组格式存储
-  mistakeType    String    // JSON数组格式存储
-  isSolved       Boolean   @default(false)
-  solvedAt       DateTime?
-  reviewCount    Int       @default(0)
-  lastReviewAt   DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id              String   @id @default(cuid())
+  userId          String
+  subject         String
+  grade           String
+  chapter         String
+  difficulty      String
+  questionType    String
+  questionImage   String
+  questionText    String?
+  answer          String
+  correctAnswer   String
+  analysis        String?
+  knowledgePoints String
+  mistakeType     String
+  isSolved        Boolean  @default(false)
+  solvedAt        DateTime?
+  reviewCount     Int      @default(0)
+  lastReviewAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  // 关联关系
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reviews        Review[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews Review[]
 
   @@map("mistakes")
 }
 
-// 复习记录模型
 model Review {
-  id         String     @id @default(cuid())
+  id         String   @id @default(cuid())
   mistakeId  String
   userId     String
-  reviewTime DateTime   @default(now())
-  mastery    Int        // 0-100
+  reviewTime DateTime @default(now())
+  mastery    Int
   notes      String?
 
-  // 关联关系
-  mistake    Mistake    @relation(fields: [mistakeId], references: [id], onDelete: Cascade)
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mistake Mistake @relation(fields: [mistakeId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
 
-// 学习报告模型
-model Report {
-  id          String    @id @default(cuid())
-  userId      String
-  reportType  ReportType
-  period      Json      // 存储开始和结束时间
-  totalMistakes Int
-  solvedMistakes Int
-  correctRate     Float   // 百分比
-  knowledgePoints Json  // 存储知识点掌握情况
-  studyTime       Int    // 分钟
-  averageDailyStudyTime Float
-  streakDays      Int
-  createdAt       DateTime @default(now())
+model KnowledgePoint {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  subject      String
+  grade        String
+  chapter      String
+  description  String?
+  masteryLevel Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  // 关联关系
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("knowledge_points")
+}
+
+model Report {
+  id                   String   @id @default(cuid())
+  userId               String
+  reportType           String
+  period               String
+  totalMistakes        Int
+  solvedMistakes       Int
+  correctRate          Float
+  knowledgePoints      String
+  studyTime            Int
+  averageDailyStudyTime Float
+  streakDays           Int
+  createdAt            DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reports")
 }
 
-// 个性化推荐模型
 model Recommendation {
-  id          String           @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
-  type        RecommendationType
-  targetId    String           // questionId 或 knowledgePointId
-  priority    Int              // 1-10
+  type        String
+  targetId    String
+  priority    Int
   reason      String
-  isCompleted Boolean          @default(false)
+  isCompleted Boolean   @default(false)
   completedAt DateTime?
-  createdAt   DateTime         @default(now())
+  createdAt   DateTime  @default(now())
 
-  // 关联关系
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("recommendations")
 }
 
-// 统计数据模型
 model Statistics {
-  id            String    @id @default(cuid())
-  userId        String
-  totalQuestions    Int
-  totalMistakes     Int
-  solvedMistakes    Int
-  correctRate       Float
-  averageTimePerQuestion Float
-  studyStreak       Int
-  weeklyStudyHours  Float
-  subjectDistribution    Json  // JSON格式存储
-  difficultyDistribution  Json  // JSON格式存储
-  recentProgress     Json   // JSON格式存储
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                      String   @id @default(cuid())
+  userId                  String
+  totalQuestions          Int
+  totalMistakes           Int
+  solvedMistakes          Int
+  correctRate             Float
+  averageTimePerQuestion  Float
+  studyStreak             Int
+  weeklyStudyHours        Float
+  subjectDistribution     String
+  difficultyDistribution  String
+  recentProgress          String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
-  // 关联关系
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("statistics")
 }
 
-// 题库模型
 model Question {
-  id            String       @id @default(cuid())
-  subject       Subject
-  grade         Grade
-  chapter       String
-  difficulty    Difficulty
-  questionType  QuestionType
-  content       String
-  options       Json?        // 选项数组
-  correctAnswer String
-  analysis      String
-  knowledgePoints Json      // JSON数组
-  tags          String[]     // 标签数组
-  isActive      Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id              String            @id @default(cuid())
+  subject         String
+  grade           String
+  chapter         String
+  difficulty      String
+  questionType    String
+  content         String
+  options         String?
+  correctAnswer   String
+  analysis        String
+  knowledgePoints String
+  tags            String
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
-  // 关联关系
-  attempts      QuestionAttempt[]
+  attempts QuestionAttempt[]
 
   @@map("questions")
 }
 
-// 题目尝试记录模型
 model QuestionAttempt {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   userId     String
   questionId String
   answer     String
   isCorrect  Boolean
-  timeSpent  Int       // 秒
-  createdAt  DateTime  @default(now())
+  timeSpent  Int
+  createdAt  DateTime @default(now())
 
-  // 关联关系
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("question_attempts")
-}
-
-// 枚举定义
-enum Subject {
-  MATH
-  CHINESE
-  ENGLISH
-  PHYSICS
-  CHEMISTRY
-  BIOLOGY
-}
-
-enum Grade {
-  GRADE_7
-  GRADE_8
-  GRADE_9
-  GRADE_10
-  GRADE_11
-  GRADE_12
-}
-
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
-}
-
-enum QuestionType {
-  SINGLE_CHOICE
-  MULTIPLE_CHOICE
-  TRUE_FALSE
-  FILL_BLANK
-  SHORT_ANSWER
-  ESSAY
-}
-
-enum ReportType {
-  DAILY
-  WEEKLY
-  MONTHLY
-}
-
-enum RecommendationType {
-  QUESTION
-  KNOWLEDGE
-  REVIEW
 }

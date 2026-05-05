@@ -175,7 +175,7 @@ router.post(
           answer,
           correctAnswer: question.correctAnswer,
           analysis: question.analysis,
-          knowledgePoints: JSON.stringify(question.knowledgePoints || []),
+          knowledgePoints: question.knowledgePoints || '[]',
           mistakeType: JSON.stringify([]),
         },
       });
